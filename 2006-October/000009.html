@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> Using SM501 on arm-linux
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C4538D9DE.2090808%40anagramm.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000008.html">
+   <LINK REL="Next"  HREF="000010.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>Using SM501 on arm-linux</H1>
+    <B>Clemens Koller</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C4538D9DE.2090808%40anagramm.de%3E"
+       TITLE="Using SM501 on arm-linux">clemens.koller at anagramm.de
+       </A><BR>
+    <I>Fri Oct 20 16:14:54 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000008.html">Using SM501 on arm-linux
+</A></li>
+        <LI>Next message: <A HREF="000010.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello, Ole!
+
+I've just started to checkout the latest SVN version (8).
+I am working with a powerpc linux-2.6.19-rc1 kernel tree using git.
+
+There is some code cleanup needed, that's right.
+But it's a start....
+
+Greets,
+
+Clemens Koller
+_______________________________
+R&amp;D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+<A HREF="http://www.anagramm.de">http://www.anagramm.de</A>
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+Ole Reinhardt wrote:
+&gt;<i> Hi all,
+</I>&gt;<i> 
+</I>&gt;<i> I'm new to the list and new to the sm5xx devices as well. So first let
+</I>&gt;<i> me say hello! I just found the sm5xx driver project at berlios.
+</I>&gt;<i> 
+</I>&gt;<i> I'm porting linux to a pxa255 based device. Alomost all device drivers
+</I>&gt;<i> are working will by now, so only the framebuffer and usb-host part are
+</I>&gt;<i> still missing. Unfortunatly there is a sm501 doing this job on my board.
+</I>&gt;<i> 
+</I>&gt;<i> I'm very happy to see that there is still a project to support this
+</I>&gt;<i> chip.
+</I>&gt;<i> 
+</I>&gt;<i> I fetched the most recent SVN version of the driver and tried to include
+</I>&gt;<i> the code in my kernel.
+</I>&gt;<i> 
+</I>&gt;<i> Do you have a prefered way to do so?
+</I>&gt;<i> 
+</I>&gt;<i> After some hacking I finaly made at least the mfd directory to compile
+</I>&gt;<i> and link with the kernel. I selected MMIO mode, base address 0x10000000
+</I>&gt;<i> (CS4 on pxa255). When loading the kernel nothing happens and the driver
+</I>&gt;<i> seems not to be activated.
+</I>&gt;<i> 
+</I>&gt;<i> Next step was to insert the framebuffer code as well, but here I get a
+</I>&gt;<i> compile error as it needs the symbol &quot;FB_ACCEL_SM5XX&quot;.
+</I>&gt;<i> 
+</I>&gt;<i> Could anybode give me a hint how to proceed and make the driver working
+</I>&gt;<i> on my hardware? I would be glad to contribute whereever I can to your
+</I>&gt;<i> project.
+</I>&gt;<i> 
+</I>&gt;<i> Best regards,
+</I>&gt;<i> 
+</I>&gt;<i> Ole Reinhardt
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000008.html">Using SM501 on arm-linux
+</A></li>
+	<LI>Next message: <A HREF="000010.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

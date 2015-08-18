@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> Using SM501 on arm-linux
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C4538EB40.7000000%40billgatliff.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000011.html">
+   <LINK REL="Next"  HREF="000013.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>Using SM501 on arm-linux</H1>
+    <B>Bill Gatliff</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C4538EB40.7000000%40billgatliff.com%3E"
+       TITLE="Using SM501 on arm-linux">bgat at billgatliff.com
+       </A><BR>
+    <I>Fri Oct 20 17:29:04 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000011.html">Using SM501 on arm-linux
+</A></li>
+        <LI>Next message: <A HREF="000013.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#12">[ date ]</a>
+              <a href="thread.html#12">[ thread ]</a>
+              <a href="subject.html#12">[ subject ]</a>
+              <a href="author.html#12">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Clemens:
+
+
+&gt;<i>No problem.
+</I>&gt;<i>The current status over here:
+</I>&gt;<i>
+</I>&gt;<i>  CC      drivers/i2c/busses/i2c-sm5xx.o
+</I>&gt;<i>In file included from drivers/i2c/busses/i2c-sm5xx.c:20:
+</I>&gt;<i>include/linux/config.h:6:2: warning: #warning Including config.h is deprecated.
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c: In function `sm5xx_i2c_probe':
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c:148: error: `I2C_HW_B_SM501' undeclared (first use in this function)
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c:148: error: (Each undeclared identifier is reported only once
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c:148: error: for each function it appears in.)
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c:155: error: structure has no member named `mdelay'
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c: At top level:
+</I>&gt;<i>drivers/i2c/busses/i2c-sm5xx.c:198: warning: initialization from incompatible pointer type
+</I>&gt;<i>make[3]: *** [drivers/i2c/busses/i2c-sm5xx.o] Error 1
+</I>&gt;<i>make[2]: *** [drivers/i2c/busses] Error 2
+</I>&gt;<i>make[1]: *** [drivers/i2c] Error 2
+</I>&gt;<i>make: *** [drivers] Error 2
+</I>&gt;<i>  
+</I>&gt;<i>
+</I>
+
+The offending code, as I'm sure you know:
+
+int sm5xx_i2c_probe(struct sm5xx_dev *dev)
+{
+...
+        chan-&gt;adapter.id = I2C_HW_B_SM501;
+...
+
+That looks like he just missed a header file somewhere.  What happens if 
+you comment that line out?  Or turn off i2c?
+
+Maybe my suggestion for SVN wasn't a good one, at least not without it 
+also including the surrounding kernel source code.  Without that, what 
+we really need is a patch file that's a diff against one of Linus' trees.
+
+
+b.g.
+
+-- 
+Bill Gatliff
+<A HREF="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">bgat at billgatliff.com</A>
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000011.html">Using SM501 on arm-linux
+</A></li>
+	<LI>Next message: <A HREF="000013.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#12">[ date ]</a>
+              <a href="thread.html#12">[ thread ]</a>
+              <a href="subject.html#12">[ subject ]</a>
+              <a href="author.html#12">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> platform device driver development
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20platform%20device%20driver%20development&In-Reply-To=%3C1161707281.6413.49.camel%40platon%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000015.html">
+   <LINK REL="Next"  HREF="000017.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>platform device driver development</H1>
+    <B>Ole Reinhardt</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20platform%20device%20driver%20development&In-Reply-To=%3C1161707281.6413.49.camel%40platon%3E"
+       TITLE="platform device driver development">ole.reinhardt at kernelconcepts.de
+       </A><BR>
+    <I>Tue Oct 24 18:28:01 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000015.html">Using SM501 on arm-linux
+</A></li>
+        <LI>Next message: <A HREF="000017.html">platform device driver development
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#16">[ date ]</a>
+              <a href="thread.html#16">[ thread ]</a>
+              <a href="subject.html#16">[ subject ]</a>
+              <a href="author.html#16">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi all,
+
+I'm just writing the platform driver to support mmio mode on pxa255
+devices.
+
+I'm struggling around in writing the probe function.
+
+Could you please give me some hints what the following entries in the
+sm5xx_bus struct are needed for and how I would request mem regions when
+not using pci?
+
+
+	u32 	reg_addr;   	    /* !!!Physical addr !!!*/
+	void    __iomem *regbase;
+	u32 	regs_size;
+
+	u32 	mem_addr;   	    /* !!!Physical addr !!!*/
+	void    __iomem *mem;
+	u32		mem_limit;
+
+I did not got that realy streight yet.
+
+If anyone could outline in a few words what in detail needs to be done
+in the probe function of sm5xx_platform.c this would help me alot.
+
+Best reagards,
+
+Ole Reinhardt
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000015.html">Using SM501 on arm-linux
+</A></li>
+	<LI>Next message: <A HREF="000017.html">platform device driver development
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#16">[ date ]</a>
+              <a href="thread.html#16">[ thread ]</a>
+              <a href="subject.html#16">[ subject ]</a>
+              <a href="author.html#16">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

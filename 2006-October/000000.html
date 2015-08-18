@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Sm5xx-devel] [PATCH] sm5xx: Various tidy-up and genirq API	updates.
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20%5BSm5xx-devel%5D%20%5BPATCH%5D%20sm5xx%3A%20Various%20tidy-up%20and%20genirq%20API%0A%09updates.&In-Reply-To=%3C20061013172112.GA9442%40linux-sh.org%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000001.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Sm5xx-devel] [PATCH] sm5xx: Various tidy-up and genirq API	updates.</H1>
+    <B>Paul Mundt</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20%5BSm5xx-devel%5D%20%5BPATCH%5D%20sm5xx%3A%20Various%20tidy-up%20and%20genirq%20API%0A%09updates.&In-Reply-To=%3C20061013172112.GA9442%40linux-sh.org%3E"
+       TITLE="[Sm5xx-devel] [PATCH] sm5xx: Various tidy-up and genirq API	updates.">lethal at linux-sh.org
+       </A><BR>
+    <I>Fri Oct 13 19:21:12 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000001.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Fri, Oct 13, 2006 at 08:49:04PM +0400, Andrey Volkov wrote:
+&gt;<i> Paul Mundt wrote:
+</I>&gt;<i> &gt; In recent kernels the generic hardirq interfaces have changed
+</I>&gt;<i> &gt; somewhat, update the code to build with recent kernels.
+</I>&gt;<i> &gt; 
+</I>&gt;<i> &gt; While we're at it, try to keep the IRQ desc cacheline aligned,
+</I>&gt;<i> &gt; though this really needs to be rewritten as a chained IRQ chip.
+</I>&gt;<i> Also sm5xx_alloc/... should be thrown away and switched to
+</I>&gt;<i> gen_alloc, its my todo.
+</I>&gt;<i> 
+</I>&gt;<i> About another patches - I have not objections. Commit?
+</I>&gt;<i> 
+</I>done. The IRQ chip conversion is next on my list, since it's something
+that I need to do for SH anyways.. then we can just go with the generic
+hardirq locking and forego the silly controller lock being used now.
+Likewise for sanitizing the API.
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000001.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#0">[ date ]</a>
+              <a href="thread.html#0">[ thread ]</a>
+              <a href="subject.html#0">[ subject ]</a>
+              <a href="author.html#0">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

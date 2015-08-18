@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> BITMAP_BIT_ORDER in xc/programs/Xserver/include/servermd.h to fix	endianness?
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20BITMAP_BIT_ORDER%20in%20xc/programs/Xserver/include/servermd.h%20to%20fix%0A%09endianness%3F&In-Reply-To=%3C45426C51.5090103%40anagramm.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000022.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>BITMAP_BIT_ORDER in xc/programs/Xserver/include/servermd.h to fix	endianness?</H1>
+    <B>Clemens Koller</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20BITMAP_BIT_ORDER%20in%20xc/programs/Xserver/include/servermd.h%20to%20fix%0A%09endianness%3F&In-Reply-To=%3C45426C51.5090103%40anagramm.de%3E"
+       TITLE="BITMAP_BIT_ORDER in xc/programs/Xserver/include/servermd.h to fix	endianness?">clemens.koller at anagramm.de
+       </A><BR>
+    <I>Fri Oct 27 22:30:09 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000022.html">platform device driver development
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#23">[ date ]</a>
+              <a href="thread.html#23">[ thread ]</a>
+              <a href="subject.html#23">[ subject ]</a>
+              <a href="author.html#23">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi There!
+
+(Xposted to our small sm5xx-devel group for the sm5xx in kernel drivers)
+
+I have a endianness problem with swapped colors on my silicon motion SM501
+chip on PCI Bus of an embedded PowerPC processor (MPC8540).
+
+I wrote a fb driver which just exposes the VideoRAM to /dev/fb0 in
+32bit, 8bits per color.
+If I manually copy bytes to /dev/fb0, I get the following color relationship.
+FF000000 gives me a BLUE
+00FF0000 gives me a GREEN
+0000FF00 gives me a RED
+000000FF gives me a BLACK (alpha) Pixel.
+So, my framebuffer basically works fine with BGRa colors.
+
+But, when I start X (i.e. 6.9.0) to use /dev/fb0
+I get wrong colors on the display. It looks as X writes the
+colors in an reversed aRGB order to the fb.
+
+I've tried to tell X via the fb_var_screeninfo
+structure all kind of 
+static struct fb_var_screeninfo vgxfb_var = {
+	...
+        .bits_per_pixel = 32,
+        .red            = { 24, 8, 0 }, //swapping the colors here doesn't affect X!
+        .green          = { 16, 8, 0 },
+        .blue           = { 8, 8, 0 },
+        .transp         = { 0, 8, 0 },
+	...
+};
+but it seems that X doesn't care about that at all.
+Is that a bug in X or in my code?
+Why doesn't care X about that?
+
+So, after some research, I found out that in X's source in
+xc/programs/Xserver/include/servermd.h:
+
+----- 8&lt; ----- snip!
+#if defined(__powerpc__) || defined(__ppc__)
+
+#define IMAGE_BYTE_ORDER        MSBFirst
+#define BITMAP_BIT_ORDER        MSBFirst
+#define GLYPHPADBYTES           4
+#define GETLEFTBITS_ALIGNMENT   1
+
+/* XXX Should this be for Lynx only? */
+#ifdef Lynx
+#define BITMAP_SCANLINE_UNIT    8
+#endif
+
+#define LARGE_INSTRUCTION_CACHE
+#define FAST_CONSTANT_OFFSET_MODE
+#define PLENTIFUL_REGISTERS
+#define AVOID_MEMORY_READ
+
+#define FAST_MEMCPY
+
+#endif /* PowerPC */
+
+----- 8&lt; ----- snap!
+
+...there is a way to change the BITMAP_BIT_ORDER from MSBFirst to LSBFirst.
+
+Well, is this the right place to swap the endianness of the Xserver?
+Is there a performance issue when X swaps the colors to the framebuffer?
+(PowerPC's can just use a different store instruction, so no speed penalty
+would be envolved if properly used... how can I check that?)
+
+In above code: What does &quot;Lynx&quot; mean, here?
+Is that a special case for Silicon Motion's Lynx graphics chip series?
+This code seems rather old... hopefully somebody still knows...
+
+Remember: I don't use the native X siliconmotion driver. I (still) use
+a framebuffer driver. So above effects could be tested with
+every other fb as well.
+
+Thanks,
+
+-- 
+Clemens Koller
+_______________________________
+R&amp;D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+<A HREF="http://www.anagramm.de">http://www.anagramm.de</A>
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000022.html">platform device driver development
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#23">[ date ]</a>
+              <a href="thread.html#23">[ thread ]</a>
+              <a href="subject.html#23">[ subject ]</a>
+              <a href="author.html#23">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

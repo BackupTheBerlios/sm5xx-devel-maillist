@@ -1,0 +1,67 @@
+From bgat at billgatliff.com  Fri May 18 18:00:14 2007
+From: bgat at billgatliff.com (Bill Gatliff)
+Date: Fri, 18 May 2007 11:00:14 -0500
+Subject: Problems claiming resources (PXA, SM501G8)
+Message-ID: <464DCD8E.9010808@billgatliff.com>
+
+Guys:
+
+
+I'm using an SM501G8 on a PXA270, linux-2.6.21.1 kernel.  I'm stuck with 
+this at boot:
+
+[    1.380000] sm501 sm501.0: SM501 At c181e000: Version 050100a0, 4 Mb, 
+IRQ 85
+[    1.410000] sm501 sm501.0: CurrentGate      00021807
+[    1.420000] sm501 sm501.0: CurrentClock     2a1a0a09
+[    1.440000] sm501 sm501.0: PowerModeControl 00000000
+[    1.450000] sm501-fb[0] flags 00000200: 13e80000..13e8ffff
+[    1.470000] sm501-fb[1] flags 00000200: 13f00000..13f4ffff
+[    1.480000] sm501-fb[2] flags 00000200: 10000000..103fffff
+[    1.500000] sm501-fb[3] flags 00000400: 00000055..00000055
+[    1.520000] sm501-fb.0: failed to claim resource 0
+[    1.530000] sm501 sm501.0: error registering sm501-fb (-16)
+[    1.550000] returning 0
+
+
+My resource definition looks like this:
+
+
+static struct resource sm501_device_resources[] = {
+  [0] = {.start = PXA_CS4_PHYS, .end = PXA_CS4_PHYS + (4 * 1024 * 1024), 
+.flags = IORESOURCE_MEM,},
+  [1] = {.start = PXA_CS4_PHYS + 0x3e00000, .end = PXA_CS4_PHYS + 
+0x3e00100, .flags = IORESOURCE_MEM,},
+  [2] = {.start = IRQ_GPIO(53), .end = IRQ_GPIO(53), .flags = 
+IORESOURCE_IRQ,},
+};
+
+static struct platform_device sm501_device = {
+  .name = "sm501",
+  .id = 0,
+  .num_resources = ARRAY_SIZE(sm501_device_resources),
+  .resource = sm501_device_resources,
+};
+
+static struct platform_device *devices[] __initdata = {
+  &sm501_device,
+...
+};
+
+platform_add_devices(devices, ARRAY_SIZE(devices));
+
+
+
+All the above was gleaned from staring at the code in sm501.c, so I'm 
+probably doing something wrong.  :)  Any suggestions?  I'm not 
+registering an "sm501-fb" device, only the "sm501" device shown above.
+
+
+b.g.
+
+-- 
+Bill Gatliff
+bgat at billgatliff.com
+
+
+

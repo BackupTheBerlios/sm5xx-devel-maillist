@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [patch #2 1/6] SM501: suspend support
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2007-June/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20%5Bpatch%20%232%201/6%5D%20SM501%3A%20suspend%20support&In-Reply-To=%3C20070619113137.f6f8d6e5.akpm%40linux-foundation.org%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000040.html">
+   <LINK REL="Next"  HREF="000041.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[patch #2 1/6] SM501: suspend support</H1>
+    <B>Andrew Morton</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20%5Bpatch%20%232%201/6%5D%20SM501%3A%20suspend%20support&In-Reply-To=%3C20070619113137.f6f8d6e5.akpm%40linux-foundation.org%3E"
+       TITLE="[patch #2 1/6] SM501: suspend support">akpm at linux-foundation.org
+       </A><BR>
+    <I>Tue Jun 19 20:31:37 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000040.html">[patch #2 1/6] SM501: suspend support
+</A></li>
+        <LI>Next message: <A HREF="000041.html">[patch #2 2/6] SM501: initialise SDRAM clock before bus clocks
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#46">[ date ]</a>
+              <a href="thread.html#46">[ thread ]</a>
+              <a href="subject.html#46">[ subject ]</a>
+              <a href="author.html#46">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Mon, 18 Jun 2007 21:56:21 +0100
+<A HREF="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">ben at fluff.org.uk</A> wrote:
+
+&gt;<i> +/* power management support */
+</I>&gt;<i> +
+</I>&gt;<i> +static int sm501_plat_suspend(struct platform_device *pdev, pm_message_t state)
+</I>&gt;<i> +{
+</I>&gt;<i> +	struct sm501_devdata *sm = platform_get_drvdata(pdev);
+</I>&gt;<i> +
+</I>&gt;<i> +	sm-&gt;in_suspend = 1;
+</I>&gt;<i> +	sm-&gt;pm_misc = readl(sm-&gt;regs + SM501_MISC_CONTROL);
+</I>&gt;<i> +
+</I>&gt;<i> +	sm501_dump_regs(sm);
+</I>&gt;<i> +	return 0;
+</I>&gt;<i> +}
+</I>&gt;<i> +
+</I>&gt;<i> +static int sm501_plat_resume(struct platform_device *pdev)
+</I>&gt;<i> +{
+</I>&gt;<i> +	struct sm501_devdata *sm = platform_get_drvdata(pdev);
+</I>&gt;<i> +
+</I>&gt;<i> +	sm501_dump_regs(sm);
+</I>&gt;<i> +	sm501_dump_gate(sm);
+</I>&gt;<i> +	sm501_dump_clk(sm);
+</I>&gt;<i> +
+</I>&gt;<i> +	/* check to see if we are in the same state as when suspended */
+</I>&gt;<i> +
+</I>&gt;<i> +	if (readl(sm-&gt;regs + SM501_MISC_CONTROL) != sm-&gt;pm_misc) {
+</I>&gt;<i> +		dev_info(sm-&gt;dev, &quot;SM501_MISC_CONTROL changed over sleep\n&quot;);
+</I>&gt;<i> +		writel(sm-&gt;pm_misc, sm-&gt;regs + SM501_MISC_CONTROL);
+</I>&gt;<i> +
+</I>&gt;<i> +		/* our suspend causes the controller state to change,
+</I>&gt;<i> +		 * either by something attempting setup, power loss,
+</I>&gt;<i> +		 * or an external reset event on power change */
+</I>&gt;<i> +
+</I>&gt;<i> +		if (sm-&gt;platdata &amp;&amp; sm-&gt;platdata-&gt;init) {
+</I>&gt;<i> +			sm501_init_regs(sm, sm-&gt;platdata-&gt;init);
+</I>&gt;<i> +		}
+</I>&gt;<i> +	}
+</I>&gt;<i> +
+</I>&gt;<i> +	/* dump our state from resume */
+</I>&gt;<i> +
+</I>&gt;<i> +	sm501_dump_regs(sm);
+</I>&gt;<i> +	sm501_dump_clk(sm);
+</I>&gt;<i> +
+</I>&gt;<i> +	sm-&gt;in_suspend = 0;
+</I>&gt;<i> +
+</I>&gt;<i> +	return 0;
+</I>&gt;<i> +}
+</I>&gt;<i> +
+</I>&gt;<i> +
+</I>&gt;<i>  /* Initialisation data for PCI devices */
+</I>&gt;<i>  
+</I>&gt;<i>  static struct sm501_initdata sm501_pci_initdata = {
+</I>&gt;<i> @@ -1126,6 +1207,8 @@ static struct platform_driver sm501_plat
+</I>&gt;<i>  	},
+</I>&gt;<i>  	.probe		= sm501_plat_probe,
+</I>&gt;<i>  	.remove		= sm501_plat_remove,
+</I>&gt;<i> +	.suspend	= sm501_plat_suspend,
+</I>&gt;<i> +	.resume		= sm501_plat_resume,
+</I>&gt;<i>  };
+</I>
+Do we want to compile this in if CONFIG_PM=n?
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000040.html">[patch #2 1/6] SM501: suspend support
+</A></li>
+	<LI>Next message: <A HREF="000041.html">[patch #2 2/6] SM501: initialise SDRAM clock before bus clocks
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#46">[ date ]</a>
+              <a href="thread.html#46">[ thread ]</a>
+              <a href="subject.html#46">[ subject ]</a>
+              <a href="author.html#46">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

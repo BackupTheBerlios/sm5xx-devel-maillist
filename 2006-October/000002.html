@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20%5BSm5xx-devel%5D%20%5BLinux-fbdev-devel%5D%20SM501%20framebuffer%20driver&In-Reply-To=%3C20061016030154.GA6301%40linux-sh.org%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000001.html">
+   <LINK REL="Next"  HREF="000004.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver</H1>
+    <B>Paul Mundt</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20%5BSm5xx-devel%5D%20%5BLinux-fbdev-devel%5D%20SM501%20framebuffer%20driver&In-Reply-To=%3C20061016030154.GA6301%40linux-sh.org%3E"
+       TITLE="[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver">lethal at linux-sh.org
+       </A><BR>
+    <I>Mon Oct 16 05:01:54 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000001.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+        <LI>Next message: <A HREF="000004.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Bill, fancy seeing you in this thread ;-)
+
+On Sun, Oct 15, 2006 at 12:34:28PM -0500, William A. Gatliff wrote:
+&gt;<i> One thing that concerns me about all of the ALSA implementations I've
+</I>&gt;<i> seen so far is that the source code for the 8051 side is never
+</I>&gt;<i> included.  GPL questions aside, for legacy reasons alone we've got to
+</I>&gt;<i> make sure that stuff gets in too.
+</I>&gt;<i> 
+</I>We want the 8051 blob in userspace if anything, there's little reason to
+tie this in to the module specifically, and it's handy to expose the
+interface for people that are specifically interested in loading in
+alternate code on the 8051.
+
+As far as including source for the 8051 code itself, that would be nice
+to have, but I doubt it's something the majority of users are going to
+care about. I've certainly never seen any.
+
+&gt;<i> But then again, there's the question of where the source code is at all,
+</I>&gt;<i> and what toolsystem you use to produce the binary image...
+</I>&gt;<i> 
+</I>I suspect it's just a simple binary blob and little else, there's
+certainly no infrastructure in the loading side for dealing with
+anything more elaborate, and it is just a stupid 8051 after all. Taking
+and disassembling the thing will likely get you as close as to what the
+real source looks like as anything else, but again, most people aren't
+going to have a use for this.
+
+Kbuild also doesn't have a simple facility for mapping in multiple cross
+compilers depending on target preference, which is one of the things we
+hit when trying to figure out how to interface the ARM7 firmware build
+for the AICA on the Dreamcast (prior to the request_firmware() interface
+being added). This is now handled by pushing everything to userspace,
+which seems the obvious choice for the 8051, too.
+
+On that note, do you have a pointer to some of the various ALSA
+implementations that are floating around? I've only seen the OSS driver
+we had in CVS, and that provides a rather dysmal starting point..
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000001.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+	<LI>Next message: <A HREF="000004.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> Problems claiming resources (PXA, SM501G8)
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2007-May/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Problems%20claiming%20resources%20%28PXA%2C%20SM501G8%29&In-Reply-To=%3C464DCD8E.9010808%40billgatliff.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>Problems claiming resources (PXA, SM501G8)</H1>
+    <B>Bill Gatliff</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Problems%20claiming%20resources%20%28PXA%2C%20SM501G8%29&In-Reply-To=%3C464DCD8E.9010808%40billgatliff.com%3E"
+       TITLE="Problems claiming resources (PXA, SM501G8)">bgat at billgatliff.com
+       </A><BR>
+    <I>Fri May 18 18:00:14 CEST 2007</I>
+    <P><UL>
+        
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#38">[ date ]</a>
+              <a href="thread.html#38">[ thread ]</a>
+              <a href="subject.html#38">[ subject ]</a>
+              <a href="author.html#38">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Guys:
+
+
+I'm using an SM501G8 on a PXA270, linux-2.6.21.1 kernel.  I'm stuck with 
+this at boot:
+
+[    1.380000] sm501 sm501.0: SM501 At c181e000: Version 050100a0, 4 Mb, 
+IRQ 85
+[    1.410000] sm501 sm501.0: CurrentGate      00021807
+[    1.420000] sm501 sm501.0: CurrentClock     2a1a0a09
+[    1.440000] sm501 sm501.0: PowerModeControl 00000000
+[    1.450000] sm501-fb[0] flags 00000200: 13e80000..13e8ffff
+[    1.470000] sm501-fb[1] flags 00000200: 13f00000..13f4ffff
+[    1.480000] sm501-fb[2] flags 00000200: 10000000..103fffff
+[    1.500000] sm501-fb[3] flags 00000400: 00000055..00000055
+[    1.520000] sm501-fb.0: failed to claim resource 0
+[    1.530000] sm501 sm501.0: error registering sm501-fb (-16)
+[    1.550000] returning 0
+
+
+My resource definition looks like this:
+
+
+static struct resource sm501_device_resources[] = {
+  [0] = {.start = PXA_CS4_PHYS, .end = PXA_CS4_PHYS + (4 * 1024 * 1024), 
+.flags = IORESOURCE_MEM,},
+  [1] = {.start = PXA_CS4_PHYS + 0x3e00000, .end = PXA_CS4_PHYS + 
+0x3e00100, .flags = IORESOURCE_MEM,},
+  [2] = {.start = IRQ_GPIO(53), .end = IRQ_GPIO(53), .flags = 
+IORESOURCE_IRQ,},
+};
+
+static struct platform_device sm501_device = {
+  .name = &quot;sm501&quot;,
+  .id = 0,
+  .num_resources = ARRAY_SIZE(sm501_device_resources),
+  .resource = sm501_device_resources,
+};
+
+static struct platform_device *devices[] __initdata = {
+  &amp;sm501_device,
+...
+};
+
+platform_add_devices(devices, ARRAY_SIZE(devices));
+
+
+
+All the above was gleaned from staring at the code in sm501.c, so I'm 
+probably doing something wrong.  :)  Any suggestions?  I'm not 
+registering an &quot;sm501-fb&quot; device, only the &quot;sm501&quot; device shown above.
+
+
+b.g.
+
+-- 
+Bill Gatliff
+<A HREF="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">bgat at billgatliff.com</A>
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#38">[ date ]</a>
+              <a href="thread.html#38">[ thread ]</a>
+              <a href="subject.html#38">[ subject ]</a>
+              <a href="author.html#38">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

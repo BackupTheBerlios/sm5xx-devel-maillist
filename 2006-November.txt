@@ -1,0 +1,429 @@
+From ole.reinhardt at kernelconcepts.de  Fri Nov 10 13:02:02 2006
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Fri, 10 Nov 2006 13:02:02 +0100
+Subject: sm5xx sucessfully running on pxa255, kernel 2.6.19-rc4
+Message-ID: <1163160122.6318.18.camel@platon>
+
+Hi all,
+
+at least I made the driver successfully running on my pxa255 based
+device! There are still some open issues like suspend / resume.
+
+As a base I took revision 8 from the berlios svn. I added a plattform
+device driver and made some minor enhancements in the code and made
+changes to the KConfig / Makefile to include the driver in the linux
+source tree.
+
+I would like to contribute my work back into you sourcetree. Do you have
+any preferences how to generate a patch? From the svn tree or from the
+linux source tree?
+
+Btw: Has anybody just used the internal sm5xx USB Host controller?
+
+
+Thanks for your support and the great code!
+
+Best regards,
+
+Ole Reinhardt
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+
+From avolkov at varma-el.com  Tue Nov 14 18:09:30 2006
+From: avolkov at varma-el.com (Andrey Volkov)
+Date: Tue, 14 Nov 2006 20:09:30 +0300
+Subject: sm5xx sucessfully running on pxa255, kernel 2.6.19-rc4
+In-Reply-To: <1163160122.6318.18.camel@platon>
+References: <1163160122.6318.18.camel@platon>
+Message-ID: <4559F84A.8040006@varma-el.com>
+
+Ole Reinhardt wrote:
+> Hi all,
+> 
+> at least I made the driver successfully running on my pxa255 based
+> device! There are still some open issues like suspend / resume.
+> 
+Nice news :).
+
+> As a base I took revision 8 from the berlios svn. I added a plattform
+> device driver and made some minor enhancements in the code and made
+> changes to the KConfig / Makefile to include the driver in the linux
+> source tree.
+> 
+I think that all files, which depend on sm5xx should be sent to svn,
+later they may be simply resynched with kernel.
+
+> I would like to contribute my work back into you sourcetree. Do you have
+> any preferences how to generate a patch? From the svn tree or from the
+> linux source tree?
+> 
+Preferably in kernel style (don't forget Signed-off-by).
+Firstly send patch here (in maillist), if nobody haven't objections,
+then _after acknowledge_ checked-in it to a svn.
+
+(Certainly, you are needed in write access to a svn, register at
+berlios and tell me your account).
+
+> Btw: Has anybody just used the internal sm5xx USB Host controller?
+
+> 
+> 
+> Thanks for your support and the great code!
+> 
+> Best regards,
+> 
+> Ole Reinhardt
+> 
+
+P.S. In this month I'm very busy, so I'm sorry for a long delay.
+--
+Regards
+Andrey
+
+
+From ole.reinhardt at kernelconcepts.de  Fri Nov 17 15:13:09 2006
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Fri, 17 Nov 2006 15:13:09 +0100
+Subject: ohci driver
+Message-ID: <1163772789.6207.24.camel@platon>
+
+Hi all,
+
+I queded my patch a little and first would like to finish my sm5xx ohci
+driver. 
+
+My ohci driver just works a little bit, but still seems to have some
+problems I don't yet see. 
+
+Has anybody managed to write an sm501 ohci driver that is not designed
+for sh linux? I took the voyager-gx sh linux ohci driver and modified it
+to work on my pxa255 based machine with arm-linux 2.6.19-rc5
+
+My problems:
+
+- I can't use the sm501 irq demux framework for the ohci, as the hdc
+driver want to register it's interrups by itself. So i register the
+sm501 irq as edge triggered share irq in sm5xx_bus.c and modified the
+demux routine to give back the irq (IRQ_NONE) if it's an IRQ from the
+OHCI part of the sm501 device.
+
+Could this introduce any missbehaviour? Framebuffer ist still working
+well, So I don't suppose to have a problem here.
+
+- When I start up the ohci driver, the sm501 ohci is correctly
+recognised. And seems to get started up too. Some ohci interrups occur.
+When there is a usb device connected at startup, it is recognized
+correctly as well. But then the driver hangs when getting the first
+OHCI_INTR_SF. This interrupt is never cleared and so it is called again
+and again all over the time. As a result the kernel hangs. It seems that
+the ohci did not start up realy or is loosing some information anywhere.
+I don't know what's going wrong.
+
+If I insert an usb device later on it is not recognised at all.
+
+I would be glad about any hints!
+
+Best regards,
+
+Ole Reinhardt
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+
+From avolkov at varma-el.com  Tue Nov 21 13:08:11 2006
+From: avolkov at varma-el.com (Andrey Volkov)
+Date: Tue, 21 Nov 2006 15:08:11 +0300
+Subject: FYI:  SM5xx toolchain project berliOS registration
+In-Reply-To: <4561F9F2.8020706@126.com>
+References: <452D0172.1010806@varma-el.com> <4561F9F2.8020706@126.com>
+Message-ID: <4562EC2B.9090508@varma-el.com>
+
+Hi Stephen,
+
+Stephen Yee wrote:
+> Hi All,
+>  I want to make Voyager GX PCI Demo Board Ver.A(a PCI cards with
+> SiliconMotion SM501 chip) work on PPC 405ep board to support CRT
+> monitor, I have ported Andrey Volkov's SiliconMotion SM501 drivers to
+> 2.6.17,  and I have modified the module parameter 'active_plane' to CRT,
+> but, I can't get anything from the CRT monitor, and the relative console
+> messages as following:
+It is not sufficient, I'm sorry, but driver is not in production stage.
+
+sm5xx_fb_default_var, module_param(active_plane, int, ....) (at the
+bottom of sm5xx_fb.c) must be correct too.
+
+Default/active plane(s) must be, certainly, selected by driver
+parameter, but...
+
+> 
+> ....
+> registered sm5xx-fb device
+> sm5xx_fb_enable_controller: Enabling CRT controller
+> Console: switching to colour frame buffer device 128x48
+> fb0: SM5xx CRT frame buffer device
+> .....
+> 
+> is Here a  successful  story  about using SM501 on PPC platform with
+> this driver?  and would you please give me some advices to drive this
+> devices?
+Properly speaking, we are use SM5xx on our MPC5200 based board.
+So this driver, by definition, working on PPC ;).
+AFAIK, only one problem exist in kernel FB: it is 16bpp (AKA RGB565).
+(in DirectFB and in X such problem worked around)
+
+P.S. Stephen, as I pointed in my mail, which you are quote,
+sm5xx-devel at lists.berlios.de is working, so, please, CC such mails
+in this list too.
+
+--
+Andrey Volkov
+
+
+> Thanks in Advance.
+> Stephen.
+> 
+> Andrey Volkov wrote:
+> 
+>> Hi all,
+>>
+>> Yesterday I issued new SiliconMotion SM501 drivers
+>> project request to berlios, and receive
+>> approvement couple hours ago.
+>>
+>> So project home page is:
+>>
+>> http://developer.berlios.de/projects/sm5xx/
+>>
+>> Anyone who wants admin/write-access, please register with
+>> berlios and tell me your account.
+>>
+>> SVN will be activated in nearest hours.
+>> Berlios has direct shell access to your repos.
+>> So if there are any svn/CVS-dumps to import or any
+>> scripts to set up...
+>>
+>> The central mailing list
+>>
+>>     sm5xx-devel at lists.berlios.de
+>>
+>> will be active soon too.
+>>
+>> -- 
+>> Happy hacking ;),
+>>
+>> Andrey Volkov
+>> Varma Electronics Oy
+>>
+>> -------- Original Message --------
+>> Subject: BerliOS Developer Project Approved
+>> Date: Wed, 11 Oct 2006 12:49:58 +0200 (CEST)
+>> From: admin at berlios.de
+>> To: avolkov at varma-el.com
+>>
+>> Your project registration for BerliOS Developer has been approved.
+>>
+>> Project Full Name:  SM5xx Toolchain
+>> Project Unix Name:  sm5xx
+>> CVS Server:         cvs.berlios.de
+>> SVN Server:         svn.berlios.de
+>> Shell Server:       shell.berlios.de
+>> Web Server:         sm5xx.berlios.de
+>>
+>>
+>> _______________________________________________
+>> Linuxppc-embedded mailing list
+>> Linuxppc-embedded at ozlabs.org
+>> https://ozlabs.org/mailman/listinfo/linuxppc-embedded
+>>
+>>
+>>  
+>>
+> 
+> 
+> 
+> 
+
+
+
+From stonepine at 126.com  Wed Nov 22 20:44:55 2006
+From: stonepine at 126.com (Stephen Yee)
+Date: Thu, 23 Nov 2006 03:44:55 +0800
+Subject: FYI:  SM5xx toolchain project berliOS registration
+In-Reply-To: <4562EC2B.9090508@varma-el.com>
+References: <452D0172.1010806@varma-el.com> <4561F9F2.8020706@126.com>
+	<4562EC2B.9090508@varma-el.com>
+Message-ID: <4564A8B7.3080709@126.com>
+
+Hi Andrey,
+
+Andrey Volkov wrote:
+
+>Hi Stephen,
+>
+>Stephen Yee wrote:
+>  
+>
+>>Hi All,
+>> I want to make Voyager GX PCI Demo Board Ver.A(a PCI cards with
+>>SiliconMotion SM501 chip) work on PPC 405ep board to support CRT
+>>monitor, I have ported Andrey Volkov's SiliconMotion SM501 drivers to
+>>2.6.17,  and I have modified the module parameter 'active_plane' to CRT,
+>>but, I can't get anything from the CRT monitor, and the relative console
+>>messages as following:
+>>    
+>>
+>It is not sufficient, I'm sorry, but driver is not in production stage.
+>
+>sm5xx_fb_default_var, module_param(active_plane, int, ....) (at the
+>bottom of sm5xx_fb.c) must be correct too.
+>
+>Default/active plane(s) must be, certainly, selected by driver
+>parameter, but...
+>  
+>
+I added the options as the following to use your drivers, but, I can't 
+get anything from the CRT monitor,    
+     <*> Multifuncation miscellaneous 
+devices                                    
+        <*>   Silicon Motion SM5XX companion chips 
+support                            
+              SM5xx family member (Silicon Motion SM501 (VoyagerGX) 
+support)  --->      
+              Main system connection type (Connected through PCI (pin to 
+pin or plugged i
+          [*] Bus master support 
+     
+    <*>   Silicon Motion SM501 (VoyagerGX)/SM511 framebuffer support....
+
+I found there isn't code in sm5xx_platform.c, so it should be work with 
+the Connected through PCI (pin to pin or plugged in the slot) system 
+connetc type,  so, my issue is that I didn't set the 
+sm5xx_fb_default_var correctly,isn't it? and I have ported the  
+linuxppc_2_4_devel.git code to my system and it could  work  on my PPC 
+405ep board to support dual  CRT monitors with 8bpp, and if there is any 
+good news, I'll report to the mail-list: 
+sm5xx-devel at lists.berlios.de,Thanks.
+
+>>registered sm5xx-fb device
+>>sm5xx_fb_enable_controller: Enabling CRT controller
+>>Console: switching to colour frame buffer device 128x48
+>>fb0: SM5xx CRT frame buffer device
+>>.....
+>>
+>>is Here a  successful  story  about using SM501 on PPC platform with
+>>this driver?  and would you please give me some advices to drive this
+>>devices?
+>>    
+>>
+>Properly speaking, we are use SM5xx on our MPC5200 based board.
+>So this driver, by definition, working on PPC ;).
+>AFAIK, only one problem exist in kernel FB: it is 16bpp (AKA RGB565).
+>(in DirectFB and in X such problem worked around)
+>  
+>
+Is SM5xx on your MPC5200 based board  on PCI bus?
+
+>P.S. Stephen, as I pointed in my mail, which you are quote,
+>sm5xx-devel at lists.berlios.de is working, so, please, CC such mails
+>in this list too.
+>  
+>
+I'm very sorry for that, I'll do it with this mail,Thank you!
+
+>--
+>Andrey Volkov
+>
+>
+>  
+>
+>>Thanks in Advance.
+>>Stephen.
+>>
+>>Andrey Volkov wrote:
+>>
+>>    
+>>
+>>>Hi all,
+>>>
+>>>Yesterday I issued new SiliconMotion SM501 drivers
+>>>project request to berlios, and receive
+>>>approvement couple hours ago.
+>>>
+>>>So project home page is:
+>>>
+>>>http://developer.berlios.de/projects/sm5xx/
+>>>
+>>>Anyone who wants admin/write-access, please register with
+>>>berlios and tell me your account.
+>>>
+>>>SVN will be activated in nearest hours.
+>>>Berlios has direct shell access to your repos.
+>>>So if there are any svn/CVS-dumps to import or any
+>>>scripts to set up...
+>>>
+>>>The central mailing list
+>>>
+>>>    sm5xx-devel at lists.berlios.de
+>>>
+>>>will be active soon too.
+>>>
+>>>-- 
+>>>Happy hacking ;),
+>>>
+>>>Andrey Volkov
+>>>Varma Electronics Oy
+>>>
+>>>-------- Original Message --------
+>>>Subject: BerliOS Developer Project Approved
+>>>Date: Wed, 11 Oct 2006 12:49:58 +0200 (CEST)
+>>>From: admin at berlios.de
+>>>To: avolkov at varma-el.com
+>>>
+>>>Your project registration for BerliOS Developer has been approved.
+>>>
+>>>Project Full Name:  SM5xx Toolchain
+>>>Project Unix Name:  sm5xx
+>>>CVS Server:         cvs.berlios.de
+>>>SVN Server:         svn.berlios.de
+>>>Shell Server:       shell.berlios.de
+>>>Web Server:         sm5xx.berlios.de
+>>>
+>>>
+>>>_______________________________________________
+>>>Linuxppc-embedded mailing list
+>>>Linuxppc-embedded at ozlabs.org
+>>>https://ozlabs.org/mailman/listinfo/linuxppc-embedded
+>>>
+>>>
+>>> 
+>>>
+>>>      
+>>>
+>>
+>>
+>>    
+>>
+>
+>
+>
+>  
+>
+
+
+
+

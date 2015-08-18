@@ -1,0 +1,40 @@
+From clemens.koller at anagramm.de  Thu Dec 14 15:10:05 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Thu, 14 Dec 2006 15:10:05 +0100
+Subject: SM501 driver pushed upstream!
+Message-ID: <45815B3D.7060206@anagramm.de>
+
+Hi There!
+
+I just want to let you know that Ben Dooks is about to pushed
+his work of a SM501 mfd driver upstream:
+See the thread at:
+
+http://lkml.org/lkml/2006/12/13/134
+
+Thanks, Ben!
+You are welcome to join our group at sm5xx-devel @lists.berlios,de
+if you haven't already.
+We are working (more or less intensively ;-) on the SM501 driver 
+support.
+
+For my part, I wasn't able to participate much due to my project
+schedule. However I am willing to test your code ASAP on my embedded
+PowerPC.
+
+Best greets,
+
+-- 
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm-technology.com
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+

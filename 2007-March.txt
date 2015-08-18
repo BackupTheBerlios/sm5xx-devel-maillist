@@ -1,0 +1,354 @@
+From guillaume.paquereau at gmail.com  Wed Mar  7 23:24:59 2007
+From: guillaume.paquereau at gmail.com (Guillaume PAQUEREAU)
+Date: Wed, 7 Mar 2007 23:24:59 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+Message-ID: <000001c76107$72a882e0$0c00a8c0@Papacp>
+
+Hi 
+
+ 
+
+I currently work on pxa255 base board with a sm501 for graphic, usb host and
+serial port. I successful use the frame buffer, but I have a probleme with
+USB Host. 
+
+ 
+
+I just want to know if someone as made his own ohci-usb driver.
+
+ 
+
+Best regards
+
+ 
+
+Guillaume Paquereau
+
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070307/618c6bf4/attachment.html>
+
+From clemens.koller at anagramm.de  Thu Mar  8 10:21:59 2007
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Thu, 08 Mar 2007 10:21:59 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <000001c76107$72a882e0$0c00a8c0@Papacp>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>
+Message-ID: <45EFD5B7.5090009@anagramm.de>
+
+Hello, Guillaume!
+
+> I currently work on pxa255 base board with a sm501 for graphic, usb host and
+> serial port. I successful use the frame buffer, but I have a probleme with
+> USB Host.
+ >
+> I just want to know if someone as made his own ohci-usb driver.
+
+Nice, that this list isn't completely down... however somehow redundant now.
+
+I am using the SM501 on PCI on an MPC8540 PowerPC using one of the
+latest 2.6.21-rc1 Kernels.
+However, I didn't check out the USB part in detail.
+lspci shows me the SM501 (and the framebuffer driver is working)
+but lsusb doesn't show me any OHCI controllers.
+
+You might want to check out the latest git kernel-tree and contact
+the two guys who pushed that driver to the kernel (thanks to them!).
+They are also subscribed on the linux-fbdev-devel list.
+
+Best greets,
+-- 
+Clemens Koller
+__________________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Stra?e 45/1
+Linhof Werksgel?nde
+D-81379 M?nchen
+Tel.089-741518-50
+Fax 089-741518-19
+http://www.anagramm-technology.com
+
+
+From ole.reinhardt at kernelconcepts.de  Thu Mar  8 12:25:48 2007
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Thu, 08 Mar 2007 12:25:48 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <000001c76107$72a882e0$0c00a8c0@Papacp>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>
+Message-ID: <1173353148.8389.21.camel@platon>
+
+Hi,
+
+> I currently work on pxa255 base board with a sm501 for graphic, usb
+> host and serial port. I successful use the frame buffer, but I have a
+> probleme with USB Host. 
+
+Me too, I'm using this driver on a pxa255 based machine with good
+success concerning the video driver part, but with no success with my
+own ohci driver.
+
+AFAIK there are two known issues with the OHCI in the SM501
+
+1.) The ohci dma is broken and you can only access internal RAM ==> You
+have to write a special dma allocator to access the internal sm501
+memory as dma.
+
+2.) The sm501 has a bug with the internal memory cache. You need to read
+every ms from a spare address in the internal memory range to flush the
+sm501 internal cache.
+
+I tried to implement a workaround for both of these problems. It seems
+that the DMA works at least a little bit, but I can not succeed at least
+a single usb transfer. 
+
+- OHCI gets initialized
+- USB devices are recognised
+- connect / disconnect seems to work
+- address asignement fails
+
+If you like I'll send you my code, with is based on a 2.6.20 kernel.
+Drop me a line if you'r interested.
+
+Please read the sm501 errata documents and usb host implementation
+instructions. They are only for the windows counterpart, but this
+documents give you a hint what to do.
+
+chapter aa-10:
+
+ftp://ftp.siliconmotion.com.tw/databooks/SM501%20Rev%20AA%20Errata%20Ver
+%200.6.pdf
+
+ftp://ftp.siliconmotion.com.tw/databooks/SM501%20USB%20Host%
+20Implementaton%20Guide%20V1.1.pdf
+
+If anyone hast better news or any further ideas how to solve this
+problem, please let me know.
+
+Best regards,
+
+Ole Reinhardt
+
+-- 
+kernel concepts GbR             Tel:   +49-271-771091-14
+Inh. Faerber & Kirchner         Fax:   +49-271-771091-19
+Siegh?tter Hauptweg 48          Mobil: +49-177-7420433
+D-57072 Siegen                  UstID: DE 205 648 898
+
+
+
+From ole.reinhardt at kernelconcepts.de  Thu Mar  8 12:27:47 2007
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Thu, 08 Mar 2007 12:27:47 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <45EFD5B7.5090009@anagramm.de>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>
+	<45EFD5B7.5090009@anagramm.de>
+Message-ID: <1173353267.8389.24.camel@platon>
+
+Hi,
+
+> You might want to check out the latest git kernel-tree and contact
+> the two guys who pushed that driver to the kernel (thanks to them!).
+> They are also subscribed on the linux-fbdev-devel list.
+
+This is great news! Is this driver usable for pci only and/or is it
+platform independant? Is it just included in 2.6.20? I have not found
+any up to now...
+
+Best regards,
+
+Ole Reinhardt
+> 
+-- 
+kernel concepts GbR             Tel:   +49-271-771091-14
+Inh. Faerber & Kirchner         Fax:   +49-271-771091-19
+Siegh?tter Hauptweg 48          Mobil: +49-177-7420433
+D-57072 Siegen                  UstID: DE 205 648 898
+
+
+
+From clemens.koller at anagramm.de  Thu Mar  8 15:10:34 2007
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Thu, 08 Mar 2007 15:10:34 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <1173353148.8389.21.camel@platon>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>
+	<1173353148.8389.21.camel@platon>
+Message-ID: <45F0195A.50608@anagramm.de>
+
+Hello, Rainhardt!
+
+> 2.) The sm501 has a bug with the internal memory cache. You need to read
+> every ms from a spare address in the internal memory range to flush the
+> sm501 internal cache.
+
+Can the internal 8051 help you solving that job? I've heard that
+for the AC97 audio there should be also DMA issues. And there
+might be a work around in that area by letting the 8051 so some
+dirty stuff.
+(Don't ask me details... That's all I know about that topic.)
+
+> If anyone hast better news or any further ideas how to solve this
+> problem, please let me know.
+
+Another story:
+There was an article in the CIE (Components in Electronics)
+in January 2007 which said:
+
+-----8<-----
+Article 	January 2007   	
+Ultra low power graphics and co-processor
+
+Silicon Motion is continuing to expand its mobile graphics product line 
+with the introduction of the SM502, available in the UK from Sabre 
+Advanced Microelectronics.
+
+The SM502 is an enhanced version of the SM501, with increased 2D and 
+video acceleration performance and ultra low power consumption for 
+resolutions up to 1280 x1024. It has a flexible bus interface supporting 
+a direct connection to 32-bit embedded CPUs or PCI 33/66, and dual ZV 
+port with ITU656 support for multiple data stream capture and real-time 
+display and colour space conversion capability.
+
+Other key features include a programmable panel clock (PCLK) for 
+frequency customisation to support standard and non-standard panel 
+timings; integrated I/O; 0 or 8MB integrated memory; and LCD, CRT or TV 
+support with flexible display configurations.
+
+The SM502 is pin-to-pin and software backwards compatible with the SM501.
+
+Sabre
+www.sabreadv.com
+
+Silicon Motion
+www.siliconmotion.com
+-----8<-----
+
+The article seems not being online at CIE anymore, I extracted the
+above information from Google Cache.
+
+Best regards,
+-- 
+Clemens Koller
+__________________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Stra?e 45/1
+Linhof Werksgel?nde
+D-81379 M?nchen
+Tel.089-741518-50
+Fax 089-741518-19
+http://www.anagramm-technology.com
+
+
+From clemens.koller at anagramm.de  Thu Mar  8 15:13:12 2007
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Thu, 08 Mar 2007 15:13:12 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <1173353267.8389.24.camel@platon>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>	<45EFD5B7.5090009@anagramm.de>
+	<1173353267.8389.24.camel@platon>
+Message-ID: <45F019F8.4040407@anagramm.de>
+
+Hello, Ole!
+
+>> You might want to check out the latest git kernel-tree and contact
+>> the two guys who pushed that driver to the kernel (thanks to them!).
+>> They are also subscribed on the linux-fbdev-devel list.
+> 
+> This is great news! Is this driver usable for pci only and/or is it
+> platform independant? Is it just included in 2.6.20? I have not found
+> any up to now...
+
+It (2.6.21-rc1) works on PCI on my PowerPC mpc8540ads compatible
+platform.
+
+However, according to the description of the kernel option it should
+be "versatile". And I know several setups with the SM501 on the
+local bus of some PowerPC working fine.
+
+Best greets,
+
+-- 
+Clemens Koller
+__________________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Stra?e 45/1
+Linhof Werksgel?nde
+D-81379 M?nchen
+Tel.089-741518-50
+Fax 089-741518-19
+http://www.anagramm-technology.com
+
+
+From ole.reinhardt at kernelconcepts.de  Thu Mar  8 15:23:13 2007
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Thu, 08 Mar 2007 15:23:13 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <45F0195A.50608@anagramm.de>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>
+	<1173353148.8389.21.camel@platon>  <45F0195A.50608@anagramm.de>
+Message-ID: <1173363794.8389.56.camel@platon>
+
+Hi,
+
+> Silicon Motion is continuing to expand its mobile graphics product line 
+> with the introduction of the SM502, available in the UK from Sabre 
+> Advanced Microelectronics.
+
+Sorry, the platform we are working with is not our own, so I don't see
+much of a chance to get newer hardware :-(
+
+Bye,
+
+Ole
+
+-- 
+kernel concepts GbR             Tel:   +49-271-771091-14
+Inh. Faerber & Kirchner         Fax:   +49-271-771091-19
+Siegh?tter Hauptweg 48          Mobil: +49-177-7420433
+D-57072 Siegen                  UstID: DE 205 648 898
+
+
+
+From clemens.koller at anagramm.de  Fri Mar  9 14:07:36 2007
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Fri, 09 Mar 2007 14:07:36 +0100
+Subject: sm501 on pxa255 with the kernel 2.6.20
+In-Reply-To: <1173363794.8389.56.camel@platon>
+References: <000001c76107$72a882e0$0c00a8c0@Papacp>	<1173353148.8389.21.camel@platon>
+	<45F0195A.50608@anagramm.de> <1173363794.8389.56.camel@platon>
+Message-ID: <45F15C18.7030005@anagramm.de>
+
+Hello, Ole!
+
+  >> Silicon Motion is continuing to expand its mobile graphics product line
+>> with the introduction of the SM502, available in the UK from Sabre 
+>> Advanced Microelectronics.
+> 
+> Sorry, the platform we are working with is not our own, so I don't see
+> much of a chance to get newer hardware :-(
+
+Well... I didn't tell you that you have to change your chip.
+I changed some SM501 on my hardware by hand, so I would do it
+again instead of fixing stupid things in software. :-)
+
+I will ask our distributor about the status of the SM502.
+I don't think it's available yet (or at all).
+
+Best greets,
+-- 
+Clemens Koller
+__________________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Stra?e 45/1
+Linhof Werksgel?nde
+D-81379 M?nchen
+Tel.089-741518-50
+Fax 089-741518-19
+http://www.anagramm-technology.com
+
+

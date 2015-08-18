@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> Using SM501 on arm-linux
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C1161700152.6413.34.camel%40platon%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000014.html">
+   <LINK REL="Next"  HREF="000016.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>Using SM501 on arm-linux</H1>
+    <B>Ole Reinhardt</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C1161700152.6413.34.camel%40platon%3E"
+       TITLE="Using SM501 on arm-linux">ole.reinhardt at kernelconcepts.de
+       </A><BR>
+    <I>Tue Oct 24 16:29:12 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000014.html">Using SM501 on arm-linux
+</A></li>
+        <LI>Next message: <A HREF="000016.html">platform device driver development
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#15">[ date ]</a>
+              <a href="thread.html#15">[ thread ]</a>
+              <a href="subject.html#15">[ subject ]</a>
+              <a href="author.html#15">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi all,
+
+&gt;<i> Btw Ole, returned back to your configuration, if you are looked in
+</I>&gt;<i> drivers/mfd/sm5xx/sm5xx_platform.c, you'll see one terrible comment:
+</I>&gt;<i> TODO :(.
+</I>&gt;<i> I don't think that write this driver will be a big problem, I hope
+</I>&gt;<i> it will be same as sm5xx_pci.c, but I've not hardware with
+</I>&gt;<i> MMIO sm501 to check it :(.
+</I>
+I applied your patches. Beside some smaler changes everything compiled
+(with some warnings). As a result I don't get much more than a kernel
+oops (currently running 2.6.19-rc3 on pxa255).
+
+I suppose this is the result of the missing platform driver?
+
+Do you have an example of what needs to be included in the plaform
+driver? I then would do my best to implement it.
+
+Best regards,
+
+Ole Reinhardt
+
+
+Here is the oops:
+
+Unable to handle kernel NULL pointer dereference at virtual address
+00000008
+pgd = c0004000
+[00000008] *pgd=00000000
+Internal error: Oops: f5 [#1]
+Modules linked in:
+CPU: 0
+PC is at kref_get+0xc/0x60
+LR is at klist_next+0x6c/0xa8
+pc : [&lt;c011d6d4&gt;]    lr : [&lt;c023d45c&gt;]    Not tainted
+sp : c0401ec8  ip : c0401edc  fp : c0401ed8
+r10: c001fd70  r9 : 00000000  r8 : fffffffc
+r7 : 00000000  r6 : 00000000  r5 : c0401f10  r4 : 00000000
+r3 : c02a2960  r2 : c0400000  r1 : 00000002  r0 : 00000008
+Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  Segment kernel
+Control: 397F
+Table: A0004000  DAC: 00000017
+Process swapper (pid: 1, stack limit = 0xc0400250)
+Stack: (0xc0401ec8 to 0xc0402000)
+1ec0:                   00000000 c0401efc c0401edc c023d45c c011d6d4
+00000000
+1ee0: c0401f10 c0164620 00000000 c02a2860 c0401f0c c0401f00 c015b69c
+c023d3fc
+1f00: c0401f38 c0401f10 c015b710 c015b698 c02a2960 c02a2960 00000000
+00000000
+1f20: c029e384 c0400000 c00202a4 c0401f60 c0401f3c c0164680 c015b6bc
+00000000
+1f40: c001fd58 c0400000 c00202a4 00000001 c001fd70 c0401f74 c0401f64
+c0017d10
+1f60: c0164650 00000000 c0401fc4 c0401f78 c00089c8 c0017cdc 00333031
+00000000
+1f80: 00000000 00000068 c02f9770 00000001 00000000 c0401fb4 c0401fa4
+c0060d18
+1fa0: 00000000 c02f9770 00000001 00000000 00000000 00000000 c0401fd4
+c0401fc8
+1fc0: c0008aa8 c000896c c0401ff4 c0401fd8 c00240dc c0008a94 00000001
+00000000
+1fe0: 00000000 00000000 00000000 c0401ff8 c003ea30 c0024090 c0401ff8
+c0401ff8
+Backtrace:
+[&lt;c011d6c8&gt;] (kref_get+0x0/0x60) from [&lt;c023d45c&gt;] (klist_next
++0x6c/0xa8)
+ r4 = 00000000
+[&lt;c023d3f0&gt;] (klist_next+0x0/0xa8) from [&lt;c015b69c&gt;] (next_device
++0x10/0x24)
+ r8 = C02A2860  r7 = 00000000  r6 = C0164620  r5 = C0401F10
+ r4 = 00000000
+[&lt;c015b68c&gt;] (next_device+0x0/0x24) from [&lt;c015b710&gt;] (bus_for_each_dev
++0x60/0x)[&lt;c015b6b0&gt;] (bus_for_each_dev+0x0/0x84) from [&lt;c0164680&gt;]
+(sm5xx_driver_regist) r7 = C00202A4  r6 = C0400000  r5 = C029E384  r4 =
+00000000
+[&lt;c0164644&gt;] (sm5xx_driver_register+0x0/0x100) from [&lt;c0017d10&gt;]
+(sm5xx_fb_init)[&lt;c0017cd0&gt;] (sm5xx_fb_init+0x0/0x4c) from [&lt;c00089c8&gt;]
+(do_initcalls+0x68/0x12)[&lt;c0008960&gt;] (do_initcalls+0x0/0x128) from
+[&lt;c0008aa8&gt;] (do_basic_setup+0x20/0x)[&lt;c0008a88&gt;] (do_basic_setup
++0x0/0x24) from [&lt;c00240dc&gt;] (init+0x58/0x15c)
+[&lt;c0024084&gt;] (init+0x0/0x15c) from [&lt;c003ea30&gt;] (do_exit+0x0/0x474)
+ r6 = 00000000  r5 = 00000000  r4 = 00000000
+Code: e91ba800 e1a0c00d e92dd810 e24cb004 (e5903000)
+ &lt;0&gt;Kernel panic - not syncing: Attempted to kill init!
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000014.html">Using SM501 on arm-linux
+</A></li>
+	<LI>Next message: <A HREF="000016.html">platform device driver development
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#15">[ date ]</a>
+              <a href="thread.html#15">[ thread ]</a>
+              <a href="subject.html#15">[ subject ]</a>
+              <a href="author.html#15">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

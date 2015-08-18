@@ -1,0 +1,1562 @@
+From lethal at linux-sh.org  Fri Oct 13 19:21:12 2006
+From: lethal at linux-sh.org (Paul Mundt)
+Date: Sat, 14 Oct 2006 02:21:12 +0900
+Subject: [Sm5xx-devel] [PATCH] sm5xx: Various tidy-up and genirq API
+	updates.
+In-Reply-To: <452FC380.4040205@varma-el.com>
+References: <c690c4e7eac122ee93346437bf91c15859d18b02.1160755142.git.lethal@linux-sh.org>
+	<11607555583934-git-send-email-lethal@linux-sh.org>
+	<11607555583651-git-send-email-lethal@linux-sh.org>
+	<11607555583592-git-send-email-lethal@linux-sh.org>
+	<452FC380.4040205@varma-el.com>
+Message-ID: <20061013172112.GA9442@linux-sh.org>
+
+On Fri, Oct 13, 2006 at 08:49:04PM +0400, Andrey Volkov wrote:
+> Paul Mundt wrote:
+> > In recent kernels the generic hardirq interfaces have changed
+> > somewhat, update the code to build with recent kernels.
+> > 
+> > While we're at it, try to keep the IRQ desc cacheline aligned,
+> > though this really needs to be rewritten as a chained IRQ chip.
+> Also sm5xx_alloc/... should be thrown away and switched to
+> gen_alloc, its my todo.
+> 
+> About another patches - I have not objections. Commit?
+> 
+done. The IRQ chip conversion is next on my list, since it's something
+that I need to do for SH anyways.. then we can just go with the generic
+hardirq locking and forego the silly controller lock being used now.
+Likewise for sanitizing the API.
+
+
+From bgat at billgatliff.com  Sun Oct 15 19:34:28 2006
+From: bgat at billgatliff.com (Bill Gatliff)
+Date: Sun, 15 Oct 2006 12:34:28 -0500
+Subject: [Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+In-Reply-To: <20061013121138.GA21744@linux-sh.org>
+References: <45268042.8050207@billgatliff.com> <452691A2.2020209@anagramm.de>
+	<20061013121138.GA21744@linux-sh.org>
+Message-ID: <45327124.6040301@billgatliff.com>
+
+Paul Mundt wrote:
+>
+> We also have an OSS driver for SM501, but it contains a lot of 8051
+> microcode that needs to be shoved in to userspace, and it needs to be
+> reworked for ALSA.
+>   
+
+
+Hi Paul!  Long time no chat!  :)
+
+
+One thing that concerns me about all of the ALSA implementations I've
+seen so far is that the source code for the 8051 side is never
+included.  GPL questions aside, for legacy reasons alone we've got to
+make sure that stuff gets in too.
+
+But then again, there's the question of where the source code is at all,
+and what toolsystem you use to produce the binary image...
+
+
+
+
+b.g.
+
+-- 
+Bill Gatliff
+bgat at billgatliff.com
+
+
+
+
+
+
+From lethal at linux-sh.org  Mon Oct 16 05:01:54 2006
+From: lethal at linux-sh.org (Paul Mundt)
+Date: Mon, 16 Oct 2006 12:01:54 +0900
+Subject: [Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+In-Reply-To: <45327124.6040301@billgatliff.com>
+References: <45268042.8050207@billgatliff.com> <452691A2.2020209@anagramm.de>
+	<20061013121138.GA21744@linux-sh.org>
+	<45327124.6040301@billgatliff.com>
+Message-ID: <20061016030154.GA6301@linux-sh.org>
+
+Hi Bill, fancy seeing you in this thread ;-)
+
+On Sun, Oct 15, 2006 at 12:34:28PM -0500, William A. Gatliff wrote:
+> One thing that concerns me about all of the ALSA implementations I've
+> seen so far is that the source code for the 8051 side is never
+> included.  GPL questions aside, for legacy reasons alone we've got to
+> make sure that stuff gets in too.
+> 
+We want the 8051 blob in userspace if anything, there's little reason to
+tie this in to the module specifically, and it's handy to expose the
+interface for people that are specifically interested in loading in
+alternate code on the 8051.
+
+As far as including source for the 8051 code itself, that would be nice
+to have, but I doubt it's something the majority of users are going to
+care about. I've certainly never seen any.
+
+> But then again, there's the question of where the source code is at all,
+> and what toolsystem you use to produce the binary image...
+> 
+I suspect it's just a simple binary blob and little else, there's
+certainly no infrastructure in the loading side for dealing with
+anything more elaborate, and it is just a stupid 8051 after all. Taking
+and disassembling the thing will likely get you as close as to what the
+real source looks like as anything else, but again, most people aren't
+going to have a use for this.
+
+Kbuild also doesn't have a simple facility for mapping in multiple cross
+compilers depending on target preference, which is one of the things we
+hit when trying to figure out how to interface the ARM7 firmware build
+for the AICA on the Dreamcast (prior to the request_firmware() interface
+being added). This is now handled by pushing everything to userspace,
+which seems the obvious choice for the 8051, too.
+
+On that note, do you have a pointer to some of the various ALSA
+implementations that are floating around? I've only seen the OSS driver
+we had in CVS, and that provides a rather dysmal starting point..
+
+
+From clemens.koller at anagramm.de  Mon Oct 16 10:18:39 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Mon, 16 Oct 2006 10:18:39 +0200
+Subject: [Sm5xx-devel] Administrativa question
+In-Reply-To: <452FAC61.9080205@varma-el.com>
+References: <452FAC61.9080205@varma-el.com>
+Message-ID: <4533405F.6010708@anagramm.de>
+
+Hello, Andrey!
+
+Andrey Volkov wrote:
+> I could disable [sm5xx-devel]/[sm5xx-svn] prefixes in mail subjects,
+> (since always List-Id presented) anyone have objections?
+> Or some more suggestions?
+
+I don't like them. :-)
+The information is already present several times in the header.
+If you keep them, I would suggest to make them as short as possible.
+
+Greets,
+
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+
+
+From bgat at billgatliff.com  Mon Oct 16 21:28:27 2006
+From: bgat at billgatliff.com (Bill Gatliff)
+Date: Mon, 16 Oct 2006 14:28:27 -0500
+Subject: [Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+In-Reply-To: <20061016030154.GA6301@linux-sh.org>
+References: <45268042.8050207@billgatliff.com> <452691A2.2020209@anagramm.de>
+	<20061013121138.GA21744@linux-sh.org>
+	<45327124.6040301@billgatliff.com>
+	<20061016030154.GA6301@linux-sh.org>
+Message-ID: <4533DD5B.4020804@billgatliff.com>
+
+Paul:
+
+Paul Mundt wrote:
+
+>Hi Bill, fancy seeing you in this thread ;-)
+>  
+>
+
+Heh, you need to talk to the guy at the door.  He'll let anyone in, I'm 
+proof!  :)
+
+>We want the 8051 blob in userspace if anything, there's little reason to
+>tie this in to the module specifically, and it's handy to expose the
+>interface for people that are specifically interested in loading in
+>alternate code on the 8051.
+>
+>As far as including source for the 8051 code itself, that would be nice
+>to have, but I doubt it's something the majority of users are going to
+>care about. I've certainly never seen any.
+>  
+>
+
+I totally agree on all points.  But I hate blobs.  If the source code is 
+around, I'd love to have it recorded somewhere even though we all know 
+that Kbuild and most users won't know what to do with it.  Just In Case.
+
+Do we even know where this blob came from originally?
+
+>On that note, do you have a pointer to some of the various ALSA
+>implementations that are floating around? I've only seen the OSS driver
+>we had in CVS, and that provides a rather dysmal starting point..
+>  
+>
+
+Whaley sent me one just last week (hi Robert!).  Given that, I don't 
+suppose he'd mind my forwarding the patch on.  What makes it tricky to 
+do so is that the patch is against his highly-evolved sm501 driver 
+stack, so there will be some mending required.
+
+Yet another reason why we've all got to get all this stuff together.  
+The SM501 is a decent chip, and there's too few of us to go around 
+re-inventing the wheel.
+
+
+
+b.g.
+
+-- 
+Bill Gatliff
+bgat at billgatliff.com
+
+
+
+From bgat at billgatliff.com  Mon Oct 16 21:48:36 2006
+From: bgat at billgatliff.com (Bill Gatliff)
+Date: Mon, 16 Oct 2006 14:48:36 -0500
+Subject: [Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+In-Reply-To: <4533E012.4060909@applieddata.net>
+References: <45268042.8050207@billgatliff.com> <452691A2.2020209@anagramm.de>
+	<20061013121138.GA21744@linux-sh.org>
+	<45327124.6040301@billgatliff.com>
+	<20061016030154.GA6301@linux-sh.org>
+	<4533DD5B.4020804@billgatliff.com>
+	<4533E012.4060909@applieddata.net>
+Message-ID: <4533E214.2010804@billgatliff.com>
+
+Robert Whaley wrote:
+
+> Bill Gatliff wrote:
+>
+>> Paul:
+>>
+>> Paul Mundt wrote:
+>>
+>>> Hi Bill, fancy seeing you in this thread ;-)
+>>>  
+>>>
+>>
+>> Heh, you need to talk to the guy at the door.  He'll let anyone in, 
+>> I'm proof!  :)
+>>
+>>> We want the 8051 blob in userspace if anything, there's little 
+>>> reason to
+>>> tie this in to the module specifically, and it's handy to expose the
+>>> interface for people that are specifically interested in loading in
+>>> alternate code on the 8051.
+>>>
+>>> As far as including source for the 8051 code itself, that would be nice
+>>> to have, but I doubt it's something the majority of users are going to
+>>> care about. I've certainly never seen any.
+>>>  
+>>>
+>>
+>> I totally agree on all points.  But I hate blobs.  If the source code 
+>> is around, I'd love to have it recorded somewhere even though we all 
+>> know that Kbuild and most users won't know what to do with it.  Just 
+>> In Case.
+>>
+>> Do we even know where this blob came from originally?
+>>
+>>> On that note, do you have a pointer to some of the various ALSA
+>>> implementations that are floating around? I've only seen the OSS driver
+>>> we had in CVS, and that provides a rather dysmal starting point..
+>>>  
+>>>
+>>
+>> Whaley sent me one just last week (hi Robert!).  Given that, I don't 
+>> suppose he'd mind my forwarding the patch on.
+>
+>
+> Not at all.  BTW: we use this (moderately buggy) compiler to compile 
+> the 8051 code:
+>
+> http://sourceforge.net/project/showfiles.php?group_id=599
+>
+> Between the bugs in the compiler and the absence of documentation in 
+> the SM501 manual about 8051 interrupts, etc.   It was pretty difficult 
+> making this work.
+>
+> Don't try anything remotely like this with this compiler:
+>
+> u8 a, b;
+> u32 c;
+>
+>    c |= a << b;
+>
+>
+
+WTF?!    :)
+
+And here I was thinking that SDCC was probably pretty good...
+
+
+>+
+>+/* There are 2 copies of shared because the shared SRAM is not safe if
+>+ * the 8051 is reading/writing to a location while the CPU is
+>+ * writing/reading the same location (according to the SM501 manual
+>+ * and verified by tests).  So 2 redundant copies are maintained and
+>+ * for the contents to be considered valid the same data must be
+>+ * present in both copies.
+>+ */
+>  
+>
+
+Classic SM501.  "Here's a feature that works.... but it doesn't!"  :)
+
+
+b.g.
+
+-- 
+Bill Gatliff
+bgat at billgatliff.com
+
+
+
+From rwhaley at applieddata.net  Mon Oct 16 21:40:02 2006
+From: rwhaley at applieddata.net (Robert Whaley)
+Date: Mon, 16 Oct 2006 15:40:02 -0400
+Subject: [Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+In-Reply-To: <4533DD5B.4020804@billgatliff.com>
+References: <45268042.8050207@billgatliff.com> <452691A2.2020209@anagramm.de>
+	<20061013121138.GA21744@linux-sh.org>
+	<45327124.6040301@billgatliff.com>
+	<20061016030154.GA6301@linux-sh.org>
+	<4533DD5B.4020804@billgatliff.com>
+Message-ID: <4533E012.4060909@applieddata.net>
+
+Bill Gatliff wrote:
+> Paul:
+> 
+> Paul Mundt wrote:
+> 
+>> Hi Bill, fancy seeing you in this thread ;-)
+>>  
+>>
+> 
+> Heh, you need to talk to the guy at the door.  He'll let anyone in, I'm 
+> proof!  :)
+> 
+>> We want the 8051 blob in userspace if anything, there's little reason to
+>> tie this in to the module specifically, and it's handy to expose the
+>> interface for people that are specifically interested in loading in
+>> alternate code on the 8051.
+>>
+>> As far as including source for the 8051 code itself, that would be nice
+>> to have, but I doubt it's something the majority of users are going to
+>> care about. I've certainly never seen any.
+>>  
+>>
+> 
+> I totally agree on all points.  But I hate blobs.  If the source code is 
+> around, I'd love to have it recorded somewhere even though we all know 
+> that Kbuild and most users won't know what to do with it.  Just In Case.
+> 
+> Do we even know where this blob came from originally?
+> 
+>> On that note, do you have a pointer to some of the various ALSA
+>> implementations that are floating around? I've only seen the OSS driver
+>> we had in CVS, and that provides a rather dysmal starting point..
+>>  
+>>
+> 
+> Whaley sent me one just last week (hi Robert!).  Given that, I don't 
+> suppose he'd mind my forwarding the patch on.
+
+Not at all.  BTW: we use this (moderately buggy) compiler to 
+compile the 8051 code:
+
+http://sourceforge.net/project/showfiles.php?group_id=599
+
+Between the bugs in the compiler and the absence of documentation 
+in the SM501 manual about 8051 interrupts, etc.   It was pretty 
+difficult making this work.
+
+Don't try anything remotely like this with this compiler:
+
+u8 a, b;
+u32 c;
+
+    c |= a << b;
+
+That's why all the registers are u8 instead of u32.
+
+>  What makes it tricky to 
+> do so is that the patch is against his highly-evolved sm501 driver 
+> stack, so there will be some mending required.
+> 
+> Yet another reason why we've all got to get all this stuff together.  
+> The SM501 is a decent chip, and there's too few of us to go around 
+> re-inventing the wheel.
+> 
+> 
+> 
+> b.g.
+> 
+
+
+-- 
+Robert Whaley
+Applied Data Systems            www.applieddata.net
+434-244-9504		    rwhaley at applieddata.net
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: sm501_8051_alsa.diff
+Type: text/x-patch
+Size: 57290 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061016/04a8b10a/attachment.bin>
+
+From avolkov at varma-el.com  Tue Oct 17 09:57:41 2006
+From: avolkov at varma-el.com (Andrey Volkov)
+Date: Tue, 17 Oct 2006 11:57:41 +0400
+Subject: [Sm5xx-devel] Administrativa question (LAST MAIL WITH
+	[sm5xx-devel] prefix)
+In-Reply-To: <4533405F.6010708@anagramm.de>
+References: <452FAC61.9080205@varma-el.com> <4533405F.6010708@anagramm.de>
+Message-ID: <45348CF5.6030900@varma-el.com>
+
+Hello All,
+
+Since nobody have strong objections, I disable
+[sm5xx-devel]/[sm5xx-svn] prefixes in subject field.
+
+Please, fix yours mail filters.
+
+P.S. Robert, subscription?
+
+--
+Regards
+Andrey Volkov
+
+
+Clemens Koller wrote:
+> Hello, Andrey!
+> 
+> Andrey Volkov wrote:
+>> I could disable [sm5xx-devel]/[sm5xx-svn] prefixes in mail subjects,
+>> (since always List-Id presented) anyone have objections?
+>> Or some more suggestions?
+> 
+> I don't like them. :-)
+> The information is already present several times in the header.
+> If you keep them, I would suggest to make them as short as possible.
+> 
+> Greets,
+> 
+> Clemens Koller
+> _______________________________
+> R&D Imaging Devices
+> Anagramm GmbH
+> Rupert-Mayer-Str. 45/1
+> 81379 Muenchen
+> Germany
+> 
+> http://www.anagramm.de
+> Phone: +49-89-741518-50
+> Fax: +49-89-741518-19
+> 
+
+
+
+From ole.reinhardt at kernelconcepts.de  Wed Oct 18 18:43:57 2006
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Wed, 18 Oct 2006 18:43:57 +0200
+Subject: Using SM501 on arm-linux
+Message-ID: <1161189837.15071.25.camel@platon>
+
+Hi all,
+
+I'm new to the list and new to the sm5xx devices as well. So first let
+me say hello! I just found the sm5xx driver project at berlios.
+
+I'm porting linux to a pxa255 based device. Alomost all device drivers
+are working will by now, so only the framebuffer and usb-host part are
+still missing. Unfortunatly there is a sm501 doing this job on my board.
+
+I'm very happy to see that there is still a project to support this
+chip.
+
+I fetched the most recent SVN version of the driver and tried to include
+the code in my kernel.
+
+Do you have a prefered way to do so?
+
+After some hacking I finaly made at least the mfd directory to compile
+and link with the kernel. I selected MMIO mode, base address 0x10000000
+(CS4 on pxa255). When loading the kernel nothing happens and the driver
+seems not to be activated.
+
+Next step was to insert the framebuffer code as well, but here I get a
+compile error as it needs the symbol "FB_ACCEL_SM5XX".
+
+Could anybode give me a hint how to proceed and make the driver working
+on my hardware? I would be glad to contribute whereever I can to your
+project.
+
+Best regards,
+
+Ole Reinhardt
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+
+From clemens.koller at anagramm.de  Fri Oct 20 16:14:54 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Fri, 20 Oct 2006 16:14:54 +0200
+Subject: Using SM501 on arm-linux
+In-Reply-To: <1161189837.15071.25.camel@platon>
+References: <1161189837.15071.25.camel@platon>
+Message-ID: <4538D9DE.2090808@anagramm.de>
+
+Hello, Ole!
+
+I've just started to checkout the latest SVN version (8).
+I am working with a powerpc linux-2.6.19-rc1 kernel tree using git.
+
+There is some code cleanup needed, that's right.
+But it's a start....
+
+Greets,
+
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+Ole Reinhardt wrote:
+> Hi all,
+> 
+> I'm new to the list and new to the sm5xx devices as well. So first let
+> me say hello! I just found the sm5xx driver project at berlios.
+> 
+> I'm porting linux to a pxa255 based device. Alomost all device drivers
+> are working will by now, so only the framebuffer and usb-host part are
+> still missing. Unfortunatly there is a sm501 doing this job on my board.
+> 
+> I'm very happy to see that there is still a project to support this
+> chip.
+> 
+> I fetched the most recent SVN version of the driver and tried to include
+> the code in my kernel.
+> 
+> Do you have a prefered way to do so?
+> 
+> After some hacking I finaly made at least the mfd directory to compile
+> and link with the kernel. I selected MMIO mode, base address 0x10000000
+> (CS4 on pxa255). When loading the kernel nothing happens and the driver
+> seems not to be activated.
+> 
+> Next step was to insert the framebuffer code as well, but here I get a
+> compile error as it needs the symbol "FB_ACCEL_SM5XX".
+> 
+> Could anybode give me a hint how to proceed and make the driver working
+> on my hardware? I would be glad to contribute whereever I can to your
+> project.
+> 
+> Best regards,
+> 
+> Ole Reinhardt
+> 
+> 
+
+
+From bgat at billgatliff.com  Fri Oct 20 16:51:24 2006
+From: bgat at billgatliff.com (Bill Gatliff)
+Date: Fri, 20 Oct 2006 09:51:24 -0500
+Subject: Using SM501 on arm-linux
+In-Reply-To: <4538D9DE.2090808@anagramm.de>
+References: <1161189837.15071.25.camel@platon> <4538D9DE.2090808@anagramm.de>
+Message-ID: <4538E26C.2000706@billgatliff.com>
+
+Clemens Koller wrote:
+
+>Hello, Ole!
+>
+>I've just started to checkout the latest SVN version (8).
+>I am working with a powerpc linux-2.6.19-rc1 kernel tree using git.
+>
+>There is some code cleanup needed, that's right.
+>But it's a start....
+>  
+>
+
+I was hoping to get more time to spend on it this week, but haven't.  Sorry!
+
+
+b.g.
+
+-- 
+Bill Gatliff
+bgat at billgatliff.com
+
+
+
+From clemens.koller at anagramm.de  Fri Oct 20 17:13:24 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Fri, 20 Oct 2006 17:13:24 +0200
+Subject: Using SM501 on arm-linux
+In-Reply-To: <4538E26C.2000706@billgatliff.com>
+References: <1161189837.15071.25.camel@platon> <4538D9DE.2090808@anagramm.de>
+	<4538E26C.2000706@billgatliff.com>
+Message-ID: <4538E794.3030303@anagramm.de>
+
+Hello, Bill and Andrey!
+
+Bill Gatliff wrote:
+> Clemens Koller wrote:
+> 
+>> Hello, Ole!
+>>
+>> I've just started to checkout the latest SVN version (8).
+>> I am working with a powerpc linux-2.6.19-rc1 kernel tree using git.
+>>
+>> There is some code cleanup needed, that's right.
+>> But it's a start....
+>>  
+> I was hoping to get more time to spend on it this week, but haven't.  
+> Sorry!
+
+No problem.
+The current status over here:
+
+  CC      drivers/i2c/busses/i2c-sm5xx.o
+In file included from drivers/i2c/busses/i2c-sm5xx.c:20:
+include/linux/config.h:6:2: warning: #warning Including config.h is deprecated.
+drivers/i2c/busses/i2c-sm5xx.c: In function `sm5xx_i2c_probe':
+drivers/i2c/busses/i2c-sm5xx.c:148: error: `I2C_HW_B_SM501' undeclared (first use in this function)
+drivers/i2c/busses/i2c-sm5xx.c:148: error: (Each undeclared identifier is reported only once
+drivers/i2c/busses/i2c-sm5xx.c:148: error: for each function it appears in.)
+drivers/i2c/busses/i2c-sm5xx.c:155: error: structure has no member named `mdelay'
+drivers/i2c/busses/i2c-sm5xx.c: At top level:
+drivers/i2c/busses/i2c-sm5xx.c:198: warning: initialization from incompatible pointer type
+make[3]: *** [drivers/i2c/busses/i2c-sm5xx.o] Error 1
+make[2]: *** [drivers/i2c/busses] Error 2
+make[1]: *** [drivers/i2c] Error 2
+make: *** [drivers] Error 2
+
+config.h can be removed, as far as i've seen.
+I2C_HW_B_SM501 is nowhere declared.
+The Kbuild is not complete.
+
+I hacked together some preliminary stuff just to see it compiling.
+But I think it's better, Andrey, if you complete and fix the environment,
+first against linus' latest git tree, if possible.
+
+Best greets,
+
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+
+
+From bgat at billgatliff.com  Fri Oct 20 17:29:04 2006
+From: bgat at billgatliff.com (Bill Gatliff)
+Date: Fri, 20 Oct 2006 10:29:04 -0500
+Subject: Using SM501 on arm-linux
+In-Reply-To: <4538E794.3030303@anagramm.de>
+References: <1161189837.15071.25.camel@platon>
+	<4538D9DE.2090808@anagramm.de>	<4538E26C.2000706@billgatliff.com>
+	<4538E794.3030303@anagramm.de>
+Message-ID: <4538EB40.7000000@billgatliff.com>
+
+Clemens:
+
+
+>No problem.
+>The current status over here:
+>
+>  CC      drivers/i2c/busses/i2c-sm5xx.o
+>In file included from drivers/i2c/busses/i2c-sm5xx.c:20:
+>include/linux/config.h:6:2: warning: #warning Including config.h is deprecated.
+>drivers/i2c/busses/i2c-sm5xx.c: In function `sm5xx_i2c_probe':
+>drivers/i2c/busses/i2c-sm5xx.c:148: error: `I2C_HW_B_SM501' undeclared (first use in this function)
+>drivers/i2c/busses/i2c-sm5xx.c:148: error: (Each undeclared identifier is reported only once
+>drivers/i2c/busses/i2c-sm5xx.c:148: error: for each function it appears in.)
+>drivers/i2c/busses/i2c-sm5xx.c:155: error: structure has no member named `mdelay'
+>drivers/i2c/busses/i2c-sm5xx.c: At top level:
+>drivers/i2c/busses/i2c-sm5xx.c:198: warning: initialization from incompatible pointer type
+>make[3]: *** [drivers/i2c/busses/i2c-sm5xx.o] Error 1
+>make[2]: *** [drivers/i2c/busses] Error 2
+>make[1]: *** [drivers/i2c] Error 2
+>make: *** [drivers] Error 2
+>  
+>
+
+
+The offending code, as I'm sure you know:
+
+int sm5xx_i2c_probe(struct sm5xx_dev *dev)
+{
+...
+        chan->adapter.id = I2C_HW_B_SM501;
+...
+
+That looks like he just missed a header file somewhere.  What happens if 
+you comment that line out?  Or turn off i2c?
+
+Maybe my suggestion for SVN wasn't a good one, at least not without it 
+also including the surrounding kernel source code.  Without that, what 
+we really need is a patch file that's a diff against one of Linus' trees.
+
+
+b.g.
+
+-- 
+Bill Gatliff
+bgat at billgatliff.com
+
+
+
+From avolkov at varma-el.com  Sun Oct 22 13:25:57 2006
+From: avolkov at varma-el.com (Andrey Volkov)
+Date: Sun, 22 Oct 2006 15:25:57 +0400
+Subject: Using SM501 on arm-linux
+In-Reply-To: <4538E794.3030303@anagramm.de>
+References: <1161189837.15071.25.camel@platon>
+	<4538D9DE.2090808@anagramm.de>	<4538E26C.2000706@billgatliff.com>
+	<4538E794.3030303@anagramm.de>
+Message-ID: <453B5545.2070304@varma-el.com>
+
+Hi Ole, Clemens,
+
+Sorry for a big delay I was out of office.
+
+Clemens Koller wrote:
+> Hello, Bill and Andrey!
+> 
+> Bill Gatliff wrote:
+>> Clemens Koller wrote:
+>>
+>>> Hello, Ole!
+>>>
+>>> I've just started to checkout the latest SVN version (8).
+>>> I am working with a powerpc linux-2.6.19-rc1 kernel tree using git.
+>>>
+>>> There is some code cleanup needed, that's right.
+>>> But it's a start....
+>>>  
+>> I was hoping to get more time to spend on it this week, but haven't.  
+>> Sorry!
+> 
+> No problem.
+> The current status over here:
+> 
+>   CC      drivers/i2c/busses/i2c-sm5xx.o
+> In file included from drivers/i2c/busses/i2c-sm5xx.c:20:
+> include/linux/config.h:6:2: warning: #warning Including config.h is deprecated.
+> drivers/i2c/busses/i2c-sm5xx.c: In function `sm5xx_i2c_probe':
+> drivers/i2c/busses/i2c-sm5xx.c:148: error: `I2C_HW_B_SM501' undeclared (first use in this function)
+> drivers/i2c/busses/i2c-sm5xx.c:148: error: (Each undeclared identifier is reported only once
+> drivers/i2c/busses/i2c-sm5xx.c:148: error: for each function it appears in.)
+> drivers/i2c/busses/i2c-sm5xx.c:155: error: structure has no member named `mdelay'
+> drivers/i2c/busses/i2c-sm5xx.c: At top level:
+> drivers/i2c/busses/i2c-sm5xx.c:198: warning: initialization from incompatible pointer type
+> make[3]: *** [drivers/i2c/busses/i2c-sm5xx.o] Error 1
+> make[2]: *** [drivers/i2c/busses] Error 2
+> make[1]: *** [drivers/i2c] Error 2
+> make: *** [drivers] Error 2
+> 
+> config.h can be removed, as far as i've seen.
+> I2C_HW_B_SM501 is nowhere declared.
+> The Kbuild is not complete.
+> 
+> I hacked together some preliminary stuff just to see it compiling.
+> But I think it's better, Andrey, if you complete and fix the environment,
+> first against linus' latest git tree, if possible.
+> 
+I couldn't do it right way since I2C_HW_B_SM501 and FB_ACCEL_SM5XX,
+must be defined in linux/i2c-id.h and linux/fb.h accordingly.
+
+As _temporarily_ solution, I attach patches which fix this
+problems.
+
+Btw Ole, returned back to your configuration, if you are looked in
+drivers/mfd/sm5xx/sm5xx_platform.c, you'll see one terrible comment:
+TODO :(.
+I don't think that write this driver will be a big problem, I hope
+it will be same as sm5xx_pci.c, but I've not hardware with
+MMIO sm501 to check it :(.
+
+--
+Regards
+Andrey Volkov
+
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: i2c-id.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061022/d64a4c0c/attachment.ksh>
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: fb.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061022/d64a4c0c/attachment-0001.ksh>
+
+From ole.reinhardt at kernelconcepts.de  Sun Oct 22 13:44:04 2006
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Sun, 22 Oct 2006 13:44:04 +0200
+Subject: Using SM501 on arm-linux
+In-Reply-To: <453B5545.2070304@varma-el.com>
+References: <1161189837.15071.25.camel@platon>
+	<4538D9DE.2090808@anagramm.de>	<4538E26C.2000706@billgatliff.com>
+	<4538E794.3030303@anagramm.de>  <453B5545.2070304@varma-el.com>
+Message-ID: <1161517444.6310.6.camel@platon>
+
+Hi all,
+
+> Sorry for a big delay I was out of office.
+
+no problem...
+
+> I couldn't do it right way since I2C_HW_B_SM501 and FB_ACCEL_SM5XX,
+> must be defined in linux/i2c-id.h and linux/fb.h accordingly.
+> 
+> As _temporarily_ solution, I attach patches which fix this
+> problems.
+> 
+> Btw Ole, returned back to your configuration, if you are looked in
+> drivers/mfd/sm5xx/sm5xx_platform.c, you'll see one terrible comment:
+> TODO :(.
+
+Yes, I found it :-) So I'll try to write it and will send you a patch if
+done so. But it could take some days, I got something else with higher
+priority.
+
+> I don't think that write this driver will be a big problem, I hope
+> it will be same as sm5xx_pci.c, but I've not hardware with
+> MMIO sm501 to check it :(.
+
+For shure I'll let you know about my experiences. As just discussed a
+patch agains one of linus kernels (for me: best the latest rc-
+candidate).
+
+Regards,
+
+Ole Reinhardt
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+
+From ole.reinhardt at kernelconcepts.de  Tue Oct 24 16:29:12 2006
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Tue, 24 Oct 2006 16:29:12 +0200
+Subject: Using SM501 on arm-linux
+In-Reply-To: <453B5545.2070304@varma-el.com>
+References: <1161189837.15071.25.camel@platon>
+	<4538D9DE.2090808@anagramm.de>	<4538E26C.2000706@billgatliff.com>
+	<4538E794.3030303@anagramm.de>  <453B5545.2070304@varma-el.com>
+Message-ID: <1161700152.6413.34.camel@platon>
+
+Hi all,
+
+> Btw Ole, returned back to your configuration, if you are looked in
+> drivers/mfd/sm5xx/sm5xx_platform.c, you'll see one terrible comment:
+> TODO :(.
+> I don't think that write this driver will be a big problem, I hope
+> it will be same as sm5xx_pci.c, but I've not hardware with
+> MMIO sm501 to check it :(.
+
+I applied your patches. Beside some smaler changes everything compiled
+(with some warnings). As a result I don't get much more than a kernel
+oops (currently running 2.6.19-rc3 on pxa255).
+
+I suppose this is the result of the missing platform driver?
+
+Do you have an example of what needs to be included in the plaform
+driver? I then would do my best to implement it.
+
+Best regards,
+
+Ole Reinhardt
+
+
+Here is the oops:
+
+Unable to handle kernel NULL pointer dereference at virtual address
+00000008
+pgd = c0004000
+[00000008] *pgd=00000000
+Internal error: Oops: f5 [#1]
+Modules linked in:
+CPU: 0
+PC is at kref_get+0xc/0x60
+LR is at klist_next+0x6c/0xa8
+pc : [<c011d6d4>]    lr : [<c023d45c>]    Not tainted
+sp : c0401ec8  ip : c0401edc  fp : c0401ed8
+r10: c001fd70  r9 : 00000000  r8 : fffffffc
+r7 : 00000000  r6 : 00000000  r5 : c0401f10  r4 : 00000000
+r3 : c02a2960  r2 : c0400000  r1 : 00000002  r0 : 00000008
+Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  Segment kernel
+Control: 397F
+Table: A0004000  DAC: 00000017
+Process swapper (pid: 1, stack limit = 0xc0400250)
+Stack: (0xc0401ec8 to 0xc0402000)
+1ec0:                   00000000 c0401efc c0401edc c023d45c c011d6d4
+00000000
+1ee0: c0401f10 c0164620 00000000 c02a2860 c0401f0c c0401f00 c015b69c
+c023d3fc
+1f00: c0401f38 c0401f10 c015b710 c015b698 c02a2960 c02a2960 00000000
+00000000
+1f20: c029e384 c0400000 c00202a4 c0401f60 c0401f3c c0164680 c015b6bc
+00000000
+1f40: c001fd58 c0400000 c00202a4 00000001 c001fd70 c0401f74 c0401f64
+c0017d10
+1f60: c0164650 00000000 c0401fc4 c0401f78 c00089c8 c0017cdc 00333031
+00000000
+1f80: 00000000 00000068 c02f9770 00000001 00000000 c0401fb4 c0401fa4
+c0060d18
+1fa0: 00000000 c02f9770 00000001 00000000 00000000 00000000 c0401fd4
+c0401fc8
+1fc0: c0008aa8 c000896c c0401ff4 c0401fd8 c00240dc c0008a94 00000001
+00000000
+1fe0: 00000000 00000000 00000000 c0401ff8 c003ea30 c0024090 c0401ff8
+c0401ff8
+Backtrace:
+[<c011d6c8>] (kref_get+0x0/0x60) from [<c023d45c>] (klist_next
++0x6c/0xa8)
+ r4 = 00000000
+[<c023d3f0>] (klist_next+0x0/0xa8) from [<c015b69c>] (next_device
++0x10/0x24)
+ r8 = C02A2860  r7 = 00000000  r6 = C0164620  r5 = C0401F10
+ r4 = 00000000
+[<c015b68c>] (next_device+0x0/0x24) from [<c015b710>] (bus_for_each_dev
++0x60/0x)[<c015b6b0>] (bus_for_each_dev+0x0/0x84) from [<c0164680>]
+(sm5xx_driver_regist) r7 = C00202A4  r6 = C0400000  r5 = C029E384  r4 =
+00000000
+[<c0164644>] (sm5xx_driver_register+0x0/0x100) from [<c0017d10>]
+(sm5xx_fb_init)[<c0017cd0>] (sm5xx_fb_init+0x0/0x4c) from [<c00089c8>]
+(do_initcalls+0x68/0x12)[<c0008960>] (do_initcalls+0x0/0x128) from
+[<c0008aa8>] (do_basic_setup+0x20/0x)[<c0008a88>] (do_basic_setup
++0x0/0x24) from [<c00240dc>] (init+0x58/0x15c)
+[<c0024084>] (init+0x0/0x15c) from [<c003ea30>] (do_exit+0x0/0x474)
+ r6 = 00000000  r5 = 00000000  r4 = 00000000
+Code: e91ba800 e1a0c00d e92dd810 e24cb004 (e5903000)
+ <0>Kernel panic - not syncing: Attempted to kill init!
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+
+From ole.reinhardt at kernelconcepts.de  Tue Oct 24 18:28:01 2006
+From: ole.reinhardt at kernelconcepts.de (Ole Reinhardt)
+Date: Tue, 24 Oct 2006 18:28:01 +0200
+Subject: platform device driver development
+Message-ID: <1161707281.6413.49.camel@platon>
+
+Hi all,
+
+I'm just writing the platform driver to support mmio mode on pxa255
+devices.
+
+I'm struggling around in writing the probe function.
+
+Could you please give me some hints what the following entries in the
+sm5xx_bus struct are needed for and how I would request mem regions when
+not using pci?
+
+
+	u32 	reg_addr;   	    /* !!!Physical addr !!!*/
+	void    __iomem *regbase;
+	u32 	regs_size;
+
+	u32 	mem_addr;   	    /* !!!Physical addr !!!*/
+	void    __iomem *mem;
+	u32		mem_limit;
+
+I did not got that realy streight yet.
+
+If anyone could outline in a few words what in detail needs to be done
+in the probe function of sm5xx_platform.c this would help me alot.
+
+Best reagards,
+
+Ole Reinhardt
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+
+From avolkov at varma-el.com  Tue Oct 24 19:54:19 2006
+From: avolkov at varma-el.com (Andrey Volkov)
+Date: Tue, 24 Oct 2006 21:54:19 +0400
+Subject: platform device driver development
+In-Reply-To: <1161707281.6413.49.camel@platon>
+References: <1161707281.6413.49.camel@platon>
+Message-ID: <453E534B.8080500@varma-el.com>
+
+Ole Reinhardt wrote:
+> Hi all,
+> 
+> I'm just writing the platform driver to support mmio mode on pxa255
+> devices.
+> 
+> I'm struggling around in writing the probe function.
+> 
+> Could you please give me some hints what the following entries in the
+> sm5xx_bus struct are needed for and how I would request mem regions when
+> not using pci?
+> 
+> 
+> 	u32 	reg_addr;   	    /* !!!Physical addr !!!*/
+This one for a _physical_ address of registers and should be
+filled in with your platform specific value (for you - it should
+be 0x10000000+62MB, if you are use Intel XScale mode ;) )
+
+> 	void    __iomem *regbase;
+this is ioremap-ped reg_addr
+
+> 	u32 	regs_size;
+
+reg_size must be 2MB or 4MB.
+
+> 	u32 	mem_addr;   	    /* !!!Physical addr !!!*/
+> 	void    __iomem *mem;
+> 	u32		mem_limit;
+> 
+Same as above but for the (onchip)memory space.
+
+Values for reg_addr/regs_size and mem_addr/mem_limit must be
+provided by your platform_device,
+defined in your platform initialization file.
+
+--
+Regards
+Andrey
+
+
+From clemens.koller at anagramm.de  Tue Oct 24 20:06:47 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Tue, 24 Oct 2006 20:06:47 +0200
+Subject: platform device driver development
+In-Reply-To: <1161707281.6413.49.camel@platon>
+References: <1161707281.6413.49.camel@platon>
+Message-ID: <453E5637.3090009@anagramm.de>
+
+Hello, Ole!
+
+> I'm just writing the platform driver to support mmio mode on pxa255
+> devices.
+
+There is a MPC5200 (PowerPC Platform) driver which accesses the sm501
+on the local bus. The guys at denx.de made the driver, IIRC.
+The Boards are manufactured by Kontron at least. Maybe you can check out
+some code there.
+
+> I'm struggling around in writing the probe function.
+> 
+> Could you please give me some hints what the following entries in the
+> sm5xx_bus struct are needed for and how I would request mem regions when
+> not using pci?
+> 
+> 
+> 	u32 	reg_addr;   	    /* !!!Physical addr !!!*/
+> 	void    __iomem *regbase;
+> 	u32 	regs_size;
+> 
+> 	u32 	mem_addr;   	    /* !!!Physical addr !!!*/
+> 	void    __iomem *mem;
+> 	u32		mem_limit;
+
+Those are the two PCI address regions, as shown below:
+$ lspci -vv
+00:0d.0 Class 0380: 126f:0501 (rev a0)
+        Subsystem: 0101:0101
+        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B-
+        Status: Cap+ 66Mhz+ UDF- FastB2B- ParErr- DEVSEL=medium >TAbort- <TAbort- <MAbort- >SERR- <PERR-
+        Latency: 128
+        Interrupt: pin A routed to IRQ 49
+        Region 0: Memory at 9f800000 (32-bit, non-prefetchable) [size=8M]
+        Region 1: Memory at 9f600000 (32-bit, non-prefetchable) [size=2M]
+        Capabilities: [40] Power Management version 1
+                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA PME(D0-,D1-,D2-,D3hot-,D3cold-)
+                Status: D0 PME-Enable- DSel=0 DScale=0 PME-
+
+In the small (2M) junk, there are all the Memory Mapped IO registers...
+The big junk (8M) is basically the Video Memory.
+
+> I did not got that realy streight yet.
+> 
+> If anyone could outline in a few words what in detail needs to be done
+> in the probe function of sm5xx_platform.c this would help me alot.
+
+Sorry, I don't know how they did it on the local busses.
+Maybe the MPC5200 stuff can help you.
+
+Just FYI: I have the PCI Demo Board with a SM501GX08 rev. AA
+and on our prototype a SM501GX08LF00 rev AB.
+Both plugged/soldered via PCI to a mpc8540 ppc.
+
+Best greets,
+
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+
+From avolkov at varma-el.com  Tue Oct 24 22:04:08 2006
+From: avolkov at varma-el.com (Andrey Volkov)
+Date: Wed, 25 Oct 2006 00:04:08 +0400
+Subject: platform device driver development
+In-Reply-To: <453E5637.3090009@anagramm.de>
+References: <1161707281.6413.49.camel@platon> <453E5637.3090009@anagramm.de>
+Message-ID: <453E71B8.7020307@varma-el.com>
+
+Hello, Clemens!
+
+Clemens Koller wrote:
+> Hello, Ole!
+> 
+>> I'm just writing the platform driver to support mmio mode on pxa255
+>> devices.
+> 
+> There is a MPC5200 (PowerPC Platform) driver which accesses the sm501
+> on the local bus. The guys at denx.de made the driver, IIRC.
+> The Boards are manufactured by Kontron at least. Maybe you can check out
+> some code there.
+> 
+>> I'm struggling around in writing the probe function.
+>>
+>> Could you please give me some hints what the following entries in the
+>> sm5xx_bus struct are needed for and how I would request mem regions when
+>> not using pci?
+>>
+>>
+>> 	u32 	reg_addr;   	    /* !!!Physical addr !!!*/
+>> 	void    __iomem *regbase;
+>> 	u32 	regs_size;
+>>
+>> 	u32 	mem_addr;   	    /* !!!Physical addr !!!*/
+>> 	void    __iomem *mem;
+>> 	u32		mem_limit;
+> 
+> Those are the two PCI address regions, as shown below:
+> $ lspci -vv
+> 00:0d.0 Class 0380: 126f:0501 (rev a0)
+>         Subsystem: 0101:0101
+>         Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B-
+>         Status: Cap+ 66Mhz+ UDF- FastB2B- ParErr- DEVSEL=medium >TAbort- <TAbort- <MAbort- >SERR- <PERR-
+>         Latency: 128
+>         Interrupt: pin A routed to IRQ 49
+>         Region 0: Memory at 9f800000 (32-bit, non-prefetchable) [size=8M]
+>         Region 1: Memory at 9f600000 (32-bit, non-prefetchable) [size=2M]
+>         Capabilities: [40] Power Management version 1
+>                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA PME(D0-,D1-,D2-,D3hot-,D3cold-)
+>                 Status: D0 PME-Enable- DSel=0 DScale=0 PME-
+> 
+> In the small (2M) junk, there are all the Memory Mapped IO registers...
+> The big junk (8M) is basically the Video Memory.
+> 
+>> I did not got that realy streight yet.
+>>
+>> If anyone could outline in a few words what in detail needs to be done
+>> in the probe function of sm5xx_platform.c this would help me alot.
+> 
+> Sorry, I don't know how they did it on the local busses.
+> Maybe the MPC5200 stuff can help you.
+> 
+As I remember Robert Whaley wrote sm501 mmio based driver
+for PXA couple years ago.
+
+Robert, any comments?
+
+> Just FYI: I have the PCI Demo Board with a SM501GX08 rev. AA
+> and on our prototype a SM501GX08LF00 rev AB.
+
+May be you are know differences between AA and AB (or planned AC)?
+Especially which bugs (if any) was fixed in this rev.
+Or 'B' has meaning only 'we are now ROHS compatible'?
+
+> Both plugged/soldered via PCI to a mpc8540 ppc.
+> 
+We have same configuration :) but with - MPC5200.
+
+> Best greets,
+> 
+> Clemens Koller
+
+--
+Regards
+Andrey Volkov
+
+
+
+From rwhaley at applieddata.net  Tue Oct 24 22:34:50 2006
+From: rwhaley at applieddata.net (Robert Whaley)
+Date: Tue, 24 Oct 2006 16:34:50 -0400
+Subject: platform device driver development
+In-Reply-To: <453E71B8.7020307@varma-el.com>
+References: <1161707281.6413.49.camel@platon> <453E5637.3090009@anagramm.de>
+	<453E71B8.7020307@varma-el.com>
+Message-ID: <453E78EA.6080008@applieddata.net>
+
+Andrey Volkov wrote:
+> Hello, Clemens!
+> 
+> Clemens Koller wrote:
+> 
+>> Hello, Ole!
+>>
+>>> I'm just writing the platform driver to support mmio mode on pxa255
+>>> devices.
+>>
+>>
+>> There is a MPC5200 (PowerPC Platform) driver which accesses the sm501
+>> on the local bus. The guys at denx.de made the driver, IIRC.
+>> The Boards are manufactured by Kontron at least. Maybe you can check out
+>> some code there.
+>>
+>>> I'm struggling around in writing the probe function.
+>>>
+>>> Could you please give me some hints what the following entries in the
+>>> sm5xx_bus struct are needed for and how I would request mem regions when
+>>> not using pci?
+>>>
+>>>
+>>>     u32     reg_addr;           /* !!!Physical addr !!!*/
+>>>     void    __iomem *regbase;
+>>>     u32     regs_size;
+>>>
+>>>     u32     mem_addr;           /* !!!Physical addr !!!*/
+>>>     void    __iomem *mem;
+>>>     u32        mem_limit;
+>>
+>>
+>> Those are the two PCI address regions, as shown below:
+>> $ lspci -vv
+>> 00:0d.0 Class 0380: 126f:0501 (rev a0)
+>>         Subsystem: 0101:0101
+>>         Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+>> ParErr- Stepping- SERR- FastB2B-
+>>         Status: Cap+ 66Mhz+ UDF- FastB2B- ParErr- DEVSEL=medium 
+>> >TAbort- <TAbort- <MAbort- >SERR- <PERR-
+>>         Latency: 128
+>>         Interrupt: pin A routed to IRQ 49
+>>         Region 0: Memory at 9f800000 (32-bit, non-prefetchable) [size=8M]
+>>         Region 1: Memory at 9f600000 (32-bit, non-prefetchable) [size=2M]
+>>         Capabilities: [40] Power Management version 1
+>>                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA 
+>> PME(D0-,D1-,D2-,D3hot-,D3cold-)
+>>                 Status: D0 PME-Enable- DSel=0 DScale=0 PME-
+>>
+>> In the small (2M) junk, there are all the Memory Mapped IO registers...
+>> The big junk (8M) is basically the Video Memory.
+>>
+>>> I did not got that realy streight yet.
+>>>
+>>> If anyone could outline in a few words what in detail needs to be done
+>>> in the probe function of sm5xx_platform.c this would help me alot.
+>>
+>>
+>> Sorry, I don't know how they did it on the local busses.
+>> Maybe the MPC5200 stuff can help you.
+>>
+> As I remember Robert Whaley wrote sm501 mmio based driver
+> for PXA couple years ago.
+> 
+> Robert, any comments?
+
+Jeff and I have a PXA255 SM501 driver for our VGX board.  It's 
+running 2.4.27, but you are welcome to download the kernel 
+patches from our web site (www.applieddata.net/support).
+
+This driver allocate the memory in the driver initialization in 
+arch/arm/mach-pxa/sm501.c:
+
+sm501Mem = ioremap_nocache(CONFIG_SM501_BASE, sm501_mem_limit);
+sm501Reg = ioremap_nocache(CONFIG_SM501_BASE + SM501_REG_OFFSET, 
+SM501_REG_SIZE);
+
+This provides kernel virtual addresses in sm501Mem and sm501Reg.
+
+CONFIG_SM501_BASE is the physical address which will be specific 
+to your board and will depend on which PXA255 chip select your 
+SM501 is using.
+
+You could also download our 2.6.17 kernel patches which has a PCI 
+based SM501 on the Portal board (IXP425).   Since it's derived 
+from the older kernel it probably could be adapted back to mmio 
+fairly easily.  In this patch the file is arch/arm/common/sm501.c
+
+> 
+>> Just FYI: I have the PCI Demo Board with a SM501GX08 rev. AA
+>> and on our prototype a SM501GX08LF00 rev AB.
+> 
+> 
+> May be you are know differences between AA and AB (or planned AC)?
+> Especially which bugs (if any) was fixed in this rev.
+> Or 'B' has meaning only 'we are now ROHS compatible'?
+> 
+>> Both plugged/soldered via PCI to a mpc8540 ppc.
+>>
+> We have same configuration :) but with - MPC5200.
+> 
+>> Best greets,
+>>
+>> Clemens Koller
+> 
+> 
+> -- 
+> Regards
+> Andrey Volkov
+> 
+> 
+
+
+-- 
+Robert Whaley
+Applied Data Systems            www.applieddata.net
+434-244-9504		    rwhaley at applieddata.net
+
+
+From clemens.koller at anagramm.de  Fri Oct 27 15:28:48 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Fri, 27 Oct 2006 15:28:48 +0200
+Subject: platform device driver development
+In-Reply-To: <453E71B8.7020307@varma-el.com>
+References: <1161707281.6413.49.camel@platon> <453E5637.3090009@anagramm.de>
+	<453E71B8.7020307@varma-el.com>
+Message-ID: <45420990.5000003@anagramm.de>
+
+Hello, Andrey!
+
+Andrey Volkov wrote:
+>> Just FYI: I have the PCI Demo Board with a SM501GX08 rev. AA
+>> and on our prototype a SM501GX08LF00 rev AB.
+> 
+> May be you are know differences between AA and AB (or planned AC)?
+> Especially which bugs (if any) was fixed in this rev.
+> Or 'B' has meaning only 'we are now ROHS compatible'?
+
+No, the LF means RoHS (LeadFree). The 08 means 8MBytes VideoRam
+The Chip is called SM501GX. I don't know anything about a SM510.
+I just remember that they fixed some SM510->SM501 typo in a manual
+according to a ChangeList.
+I don't know anything about a planned rev. AC.
+
+The differences of the revisions?
+Oh, that's not really easy to tell...
+You need to check the Schematics of the Demo board which has some
+comments of version changes, then the Manuals and finally, the Errata Sheet.
+You get all those from Silicon Motions FTP Server at:
+ftp://ftp.siliconmotion.com.tw/
+
+I.e. there are some strange things mentioned that the Demo Board with Rev. AA
+uses the TESTCLK input instead of the internal PLL.
+Some GPIO changed it's bootstrap functionality.. and so on.
+
+I currently have serious hw problems with my rev. AB chip. My Framebuffer
+driver starts's working and an image I write to /dev/fb0 get clocked out to the
+Flat Panel as usual. But once I start X or once I write more data to /dev/fb0,
+the SM501 crashes badly, so that the pixelclock just stops (which gives
+a colorful image fading out on the display) And I have to power down the whole
+think until I can retry.
+I checked the voltages and clocks really carefully, but I wasn't able to track down
+that problem. Are there some HW designers who had similar problems?
+
+Best greets,
+
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+
+From clemens.koller at anagramm.de  Fri Oct 27 15:34:12 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Fri, 27 Oct 2006 15:34:12 +0200
+Subject: platform device driver development
+In-Reply-To: <453E71B8.7020307@varma-el.com>
+References: <1161707281.6413.49.camel@platon> <453E5637.3090009@anagramm.de>
+	<453E71B8.7020307@varma-el.com>
+Message-ID: <45420AD4.8060804@anagramm.de>
+
+Hello, Andrey
+
+Oh, I forgot:
+
+SM501 Rev.AA engineering addendum v0.1.pdf
+
+tries to tells you the difference in between AA and AB
+(I guess rev A is identical with rev AA and rev B with AB)
+It's also on the FTP.
+
+> May be you are know differences between AA and AB (or planned AC)?
+> Especially which bugs (if any) was fixed in this rev.
+> Or 'B' has meaning only 'we are now ROHS compatible'?
+
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+
+From clemens.koller at anagramm.de  Fri Oct 27 22:30:09 2006
+From: clemens.koller at anagramm.de (Clemens Koller)
+Date: Fri, 27 Oct 2006 22:30:09 +0200
+Subject: BITMAP_BIT_ORDER in xc/programs/Xserver/include/servermd.h to fix
+	endianness?
+Message-ID: <45426C51.5090103@anagramm.de>
+
+Hi There!
+
+(Xposted to our small sm5xx-devel group for the sm5xx in kernel drivers)
+
+I have a endianness problem with swapped colors on my silicon motion SM501
+chip on PCI Bus of an embedded PowerPC processor (MPC8540).
+
+I wrote a fb driver which just exposes the VideoRAM to /dev/fb0 in
+32bit, 8bits per color.
+If I manually copy bytes to /dev/fb0, I get the following color relationship.
+FF000000 gives me a BLUE
+00FF0000 gives me a GREEN
+0000FF00 gives me a RED
+000000FF gives me a BLACK (alpha) Pixel.
+So, my framebuffer basically works fine with BGRa colors.
+
+But, when I start X (i.e. 6.9.0) to use /dev/fb0
+I get wrong colors on the display. It looks as X writes the
+colors in an reversed aRGB order to the fb.
+
+I've tried to tell X via the fb_var_screeninfo
+structure all kind of 
+static struct fb_var_screeninfo vgxfb_var = {
+	...
+        .bits_per_pixel = 32,
+        .red            = { 24, 8, 0 }, //swapping the colors here doesn't affect X!
+        .green          = { 16, 8, 0 },
+        .blue           = { 8, 8, 0 },
+        .transp         = { 0, 8, 0 },
+	...
+};
+but it seems that X doesn't care about that at all.
+Is that a bug in X or in my code?
+Why doesn't care X about that?
+
+So, after some research, I found out that in X's source in
+xc/programs/Xserver/include/servermd.h:
+
+----- 8< ----- snip!
+#if defined(__powerpc__) || defined(__ppc__)
+
+#define IMAGE_BYTE_ORDER        MSBFirst
+#define BITMAP_BIT_ORDER        MSBFirst
+#define GLYPHPADBYTES           4
+#define GETLEFTBITS_ALIGNMENT   1
+
+/* XXX Should this be for Lynx only? */
+#ifdef Lynx
+#define BITMAP_SCANLINE_UNIT    8
+#endif
+
+#define LARGE_INSTRUCTION_CACHE
+#define FAST_CONSTANT_OFFSET_MODE
+#define PLENTIFUL_REGISTERS
+#define AVOID_MEMORY_READ
+
+#define FAST_MEMCPY
+
+#endif /* PowerPC */
+
+----- 8< ----- snap!
+
+...there is a way to change the BITMAP_BIT_ORDER from MSBFirst to LSBFirst.
+
+Well, is this the right place to swap the endianness of the Xserver?
+Is there a performance issue when X swaps the colors to the framebuffer?
+(PowerPC's can just use a different store instruction, so no speed penalty
+would be envolved if properly used... how can I check that?)
+
+In above code: What does "Lynx" mean, here?
+Is that a special case for Silicon Motion's Lynx graphics chip series?
+This code seems rather old... hopefully somebody still knows...
+
+Remember: I don't use the native X siliconmotion driver. I (still) use
+a framebuffer driver. So above effects could be tested with
+every other fb as well.
+
+Thanks,
+
+-- 
+Clemens Koller
+_______________________________
+R&D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Str. 45/1
+81379 Muenchen
+Germany
+
+http://www.anagramm.de
+Phone: +49-89-741518-50
+Fax: +49-89-741518-19
+
+

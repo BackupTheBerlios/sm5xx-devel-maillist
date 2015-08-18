@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> Using SM501 on arm-linux
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C453B5545.2070304%40varma-el.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000012.html">
+   <LINK REL="Next"  HREF="000014.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>Using SM501 on arm-linux</H1>
+    <B>Andrey Volkov</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C453B5545.2070304%40varma-el.com%3E"
+       TITLE="Using SM501 on arm-linux">avolkov at varma-el.com
+       </A><BR>
+    <I>Sun Oct 22 13:25:57 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000012.html">Using SM501 on arm-linux
+</A></li>
+        <LI>Next message: <A HREF="000014.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Ole, Clemens,
+
+Sorry for a big delay I was out of office.
+
+Clemens Koller wrote:
+&gt;<i> Hello, Bill and Andrey!
+</I>&gt;<i> 
+</I>&gt;<i> Bill Gatliff wrote:
+</I>&gt;&gt;<i> Clemens Koller wrote:
+</I>&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> Hello, Ole!
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> I've just started to checkout the latest SVN version (8).
+</I>&gt;&gt;&gt;<i> I am working with a powerpc linux-2.6.19-rc1 kernel tree using git.
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> There is some code cleanup needed, that's right.
+</I>&gt;&gt;&gt;<i> But it's a start....
+</I>&gt;&gt;&gt;<i>  
+</I>&gt;&gt;<i> I was hoping to get more time to spend on it this week, but haven't.  
+</I>&gt;&gt;<i> Sorry!
+</I>&gt;<i> 
+</I>&gt;<i> No problem.
+</I>&gt;<i> The current status over here:
+</I>&gt;<i> 
+</I>&gt;<i>   CC      drivers/i2c/busses/i2c-sm5xx.o
+</I>&gt;<i> In file included from drivers/i2c/busses/i2c-sm5xx.c:20:
+</I>&gt;<i> include/linux/config.h:6:2: warning: #warning Including config.h is deprecated.
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c: In function `sm5xx_i2c_probe':
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c:148: error: `I2C_HW_B_SM501' undeclared (first use in this function)
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c:148: error: (Each undeclared identifier is reported only once
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c:148: error: for each function it appears in.)
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c:155: error: structure has no member named `mdelay'
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c: At top level:
+</I>&gt;<i> drivers/i2c/busses/i2c-sm5xx.c:198: warning: initialization from incompatible pointer type
+</I>&gt;<i> make[3]: *** [drivers/i2c/busses/i2c-sm5xx.o] Error 1
+</I>&gt;<i> make[2]: *** [drivers/i2c/busses] Error 2
+</I>&gt;<i> make[1]: *** [drivers/i2c] Error 2
+</I>&gt;<i> make: *** [drivers] Error 2
+</I>&gt;<i> 
+</I>&gt;<i> config.h can be removed, as far as i've seen.
+</I>&gt;<i> I2C_HW_B_SM501 is nowhere declared.
+</I>&gt;<i> The Kbuild is not complete.
+</I>&gt;<i> 
+</I>&gt;<i> I hacked together some preliminary stuff just to see it compiling.
+</I>&gt;<i> But I think it's better, Andrey, if you complete and fix the environment,
+</I>&gt;<i> first against linus' latest git tree, if possible.
+</I>&gt;<i> 
+</I>I couldn't do it right way since I2C_HW_B_SM501 and FB_ACCEL_SM5XX,
+must be defined in linux/i2c-id.h and linux/fb.h accordingly.
+
+As _temporarily_ solution, I attach patches which fix this
+problems.
+
+Btw Ole, returned back to your configuration, if you are looked in
+drivers/mfd/sm5xx/sm5xx_platform.c, you'll see one terrible comment:
+TODO :(.
+I don't think that write this driver will be a big problem, I hope
+it will be same as sm5xx_pci.c, but I've not hardware with
+MMIO sm501 to check it :(.
+
+--
+Regards
+Andrey Volkov
+
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: i2c-id.patch
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061022/d64a4c0c/attachment.ksh">https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061022/d64a4c0c/attachment.ksh</A>&gt;
+-------------- next part --------------
+An embedded and charset-unspecified text was scrubbed...
+Name: fb.patch
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061022/d64a4c0c/attachment-0001.ksh">https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20061022/d64a4c0c/attachment-0001.ksh</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000012.html">Using SM501 on arm-linux
+</A></li>
+	<LI>Next message: <A HREF="000014.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#13">[ date ]</a>
+              <a href="thread.html#13">[ thread ]</a>
+              <a href="subject.html#13">[ subject ]</a>
+              <a href="author.html#13">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

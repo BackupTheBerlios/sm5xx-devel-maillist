@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> Using SM501 on arm-linux
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C1161189837.15071.25.camel%40platon%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   <LINK REL="Next"  HREF="000009.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>Using SM501 on arm-linux</H1>
+    <B>Ole Reinhardt</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20Using%20SM501%20on%20arm-linux&In-Reply-To=%3C1161189837.15071.25.camel%40platon%3E"
+       TITLE="Using SM501 on arm-linux">ole.reinhardt at kernelconcepts.de
+       </A><BR>
+    <I>Wed Oct 18 18:43:57 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+        <LI>Next message: <A HREF="000009.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi all,
+
+I'm new to the list and new to the sm5xx devices as well. So first let
+me say hello! I just found the sm5xx driver project at berlios.
+
+I'm porting linux to a pxa255 based device. Alomost all device drivers
+are working will by now, so only the framebuffer and usb-host part are
+still missing. Unfortunatly there is a sm501 doing this job on my board.
+
+I'm very happy to see that there is still a project to support this
+chip.
+
+I fetched the most recent SVN version of the driver and tried to include
+the code in my kernel.
+
+Do you have a prefered way to do so?
+
+After some hacking I finaly made at least the mfd directory to compile
+and link with the kernel. I selected MMIO mode, base address 0x10000000
+(CS4 on pxa255). When loading the kernel nothing happens and the driver
+seems not to be activated.
+
+Next step was to insert the framebuffer code as well, but here I get a
+compile error as it needs the symbol &quot;FB_ACCEL_SM5XX&quot;.
+
+Could anybode give me a hint how to proceed and make the driver working
+on my hardware? I would be glad to contribute whereever I can to your
+project.
+
+Best regards,
+
+Ole Reinhardt
+
+
+-- 
+kernel concepts    Tel: +49-271-771091-14
+Dreisbachstr. 24   Fax: +49-271-771091-19
+D-57250 Netphen    E+ : +49-177-7420433
+--
+
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Sm5xx-devel] [Linux-fbdev-devel] SM501 framebuffer driver
+</A></li>
+	<LI>Next message: <A HREF="000009.html">Using SM501 on arm-linux
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,161 @@
+From ben at fluff.org.uk  Mon Jun 18 22:56:24 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:24 +0100
+Subject: [patch #2 4/6] SM501: Clock updates and checks
+References: <20070618205620.284044146@fluff.org.uk>
+Message-ID: <20070618210342.119095947@fluff.org.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: simtec-drivers-mfd-sm501-clockupdate.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070618/3044a94b/attachment.ksh>
+
+From ben at fluff.org.uk  Mon Jun 18 22:56:21 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:21 +0100
+Subject: [patch #2 1/6] SM501: suspend support
+References: <20070618205620.284044146@fluff.org.uk>
+Message-ID: <20070618210341.669263489@fluff.org.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: simtec-drivers-mfd-sm501-suspend.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070618/0e61ceb2/attachment.ksh>
+
+From ben at fluff.org.uk  Mon Jun 18 22:56:22 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:22 +0100
+Subject: [patch #2 2/6] SM501: initialise SDRAM clock before bus clocks
+References: <20070618205620.284044146@fluff.org.uk>
+Message-ID: <20070618210341.856633386@fluff.org.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: simtec-drivers-mfd-sm501-clock-order.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070618/4e08d107/attachment.ksh>
+
+From ben at fluff.org.uk  Mon Jun 18 22:56:25 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:25 +0100
+Subject: [patch #2 5/6] SM501: Add Documentation/SM501.txt
+References: <20070618205620.284044146@fluff.org.uk>
+Message-ID: <20070618210342.271517227@fluff.org.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: simtec-drivers-mfd-sm501-docs.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070618/dd5ae290/attachment.ksh>
+
+From ben at fluff.org.uk  Mon Jun 18 22:56:23 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:23 +0100
+Subject: [patch #2 3/6] SM501: Fix sm501_init_reg() mask/set order
+References: <20070618205620.284044146@fluff.org.uk>
+Message-ID: <20070618210341.967108783@fluff.org.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: simtec-drivers-mfd-sm501-reginitfix.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070618/5ca91ed3/attachment.ksh>
+
+From ben at fluff.org.uk  Mon Jun 18 22:56:20 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:20 +0100
+Subject: [patch #2 0/6] [#2] SM501 updates
+Message-ID: <20070618205620.284044146@fluff.org.uk>
+
+Add documentation missed in the SM501 submission
+and fix some minor problems that have been found
+whilst testing.
+
+This series has the minor typo in the clock
+patch found by Mariusz Kozlowski <m.kozlowski at tuxland.pl>
+
+I hope this series is suitable for application as
+bugfixes before the next merge window.
+
+-- 
+Ben (ben at fluff.org, http://www.fluff.org/)
+
+  'a smiley only costs 4 bytes'
+
+
+From ben at fluff.org.uk  Mon Jun 18 22:56:26 2007
+From: ben at fluff.org.uk (ben at fluff.org.uk)
+Date: Mon, 18 Jun 2007 21:56:26 +0100
+Subject: [patch #2 6/6] SM501: Check SM501 ID register on initialisation
+References: <20070618205620.284044146@fluff.org.uk>
+Message-ID: <20070618210342.412773833@fluff.org.uk>
+
+An embedded and charset-unspecified text was scrubbed...
+Name: simtec-drivers-mfd-sm501-idcheck.patch
+URL: <https://lists.berlios.de/pipermail/sm5xx-devel/attachments/20070618/ef88ff55/attachment.ksh>
+
+From akpm at linux-foundation.org  Tue Jun 19 20:31:37 2007
+From: akpm at linux-foundation.org (Andrew Morton)
+Date: Tue, 19 Jun 2007 11:31:37 -0700
+Subject: [patch #2 1/6] SM501: suspend support
+In-Reply-To: <20070618210341.669263489@fluff.org.uk>
+References: <20070618205620.284044146@fluff.org.uk>
+	<20070618210341.669263489@fluff.org.uk>
+Message-ID: <20070619113137.f6f8d6e5.akpm@linux-foundation.org>
+
+On Mon, 18 Jun 2007 21:56:21 +0100
+ben at fluff.org.uk wrote:
+
+> +/* power management support */
+> +
+> +static int sm501_plat_suspend(struct platform_device *pdev, pm_message_t state)
+> +{
+> +	struct sm501_devdata *sm = platform_get_drvdata(pdev);
+> +
+> +	sm->in_suspend = 1;
+> +	sm->pm_misc = readl(sm->regs + SM501_MISC_CONTROL);
+> +
+> +	sm501_dump_regs(sm);
+> +	return 0;
+> +}
+> +
+> +static int sm501_plat_resume(struct platform_device *pdev)
+> +{
+> +	struct sm501_devdata *sm = platform_get_drvdata(pdev);
+> +
+> +	sm501_dump_regs(sm);
+> +	sm501_dump_gate(sm);
+> +	sm501_dump_clk(sm);
+> +
+> +	/* check to see if we are in the same state as when suspended */
+> +
+> +	if (readl(sm->regs + SM501_MISC_CONTROL) != sm->pm_misc) {
+> +		dev_info(sm->dev, "SM501_MISC_CONTROL changed over sleep\n");
+> +		writel(sm->pm_misc, sm->regs + SM501_MISC_CONTROL);
+> +
+> +		/* our suspend causes the controller state to change,
+> +		 * either by something attempting setup, power loss,
+> +		 * or an external reset event on power change */
+> +
+> +		if (sm->platdata && sm->platdata->init) {
+> +			sm501_init_regs(sm, sm->platdata->init);
+> +		}
+> +	}
+> +
+> +	/* dump our state from resume */
+> +
+> +	sm501_dump_regs(sm);
+> +	sm501_dump_clk(sm);
+> +
+> +	sm->in_suspend = 0;
+> +
+> +	return 0;
+> +}
+> +
+> +
+>  /* Initialisation data for PCI devices */
+>  
+>  static struct sm501_initdata sm501_pci_initdata = {
+> @@ -1126,6 +1207,8 @@ static struct platform_driver sm501_plat
+>  	},
+>  	.probe		= sm501_plat_probe,
+>  	.remove		= sm501_plat_remove,
+> +	.suspend	= sm501_plat_suspend,
+> +	.resume		= sm501_plat_resume,
+>  };
+
+Do we want to compile this in if CONFIG_PM=n?
+
+

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> sm501 on pxa255 with the kernel 2.6.20
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2007-March/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20sm501%20on%20pxa255%20with%20the%20kernel%202.6.20&In-Reply-To=%3C45F0195A.50608%40anagramm.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000032.html">
+   <LINK REL="Next"  HREF="000036.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>sm501 on pxa255 with the kernel 2.6.20</H1>
+    <B>Clemens Koller</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20sm501%20on%20pxa255%20with%20the%20kernel%202.6.20&In-Reply-To=%3C45F0195A.50608%40anagramm.de%3E"
+       TITLE="sm501 on pxa255 with the kernel 2.6.20">clemens.koller at anagramm.de
+       </A><BR>
+    <I>Thu Mar  8 15:10:34 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000032.html">sm501 on pxa255 with the kernel 2.6.20
+</A></li>
+        <LI>Next message: <A HREF="000036.html">sm501 on pxa255 with the kernel 2.6.20
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#34">[ date ]</a>
+              <a href="thread.html#34">[ thread ]</a>
+              <a href="subject.html#34">[ subject ]</a>
+              <a href="author.html#34">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hello, Rainhardt!
+
+&gt;<i> 2.) The sm501 has a bug with the internal memory cache. You need to read
+</I>&gt;<i> every ms from a spare address in the internal memory range to flush the
+</I>&gt;<i> sm501 internal cache.
+</I>
+Can the internal 8051 help you solving that job? I've heard that
+for the AC97 audio there should be also DMA issues. And there
+might be a work around in that area by letting the 8051 so some
+dirty stuff.
+(Don't ask me details... That's all I know about that topic.)
+
+&gt;<i> If anyone hast better news or any further ideas how to solve this
+</I>&gt;<i> problem, please let me know.
+</I>
+Another story:
+There was an article in the CIE (Components in Electronics)
+in January 2007 which said:
+
+-----8&lt;-----
+Article 	January 2007   	
+Ultra low power graphics and co-processor
+
+Silicon Motion is continuing to expand its mobile graphics product line 
+with the introduction of the SM502, available in the UK from Sabre 
+Advanced Microelectronics.
+
+The SM502 is an enhanced version of the SM501, with increased 2D and 
+video acceleration performance and ultra low power consumption for 
+resolutions up to 1280 x1024. It has a flexible bus interface supporting 
+a direct connection to 32-bit embedded CPUs or PCI 33/66, and dual ZV 
+port with ITU656 support for multiple data stream capture and real-time 
+display and colour space conversion capability.
+
+Other key features include a programmable panel clock (PCLK) for 
+frequency customisation to support standard and non-standard panel 
+timings; integrated I/O; 0 or 8MB integrated memory; and LCD, CRT or TV 
+support with flexible display configurations.
+
+The SM502 is pin-to-pin and software backwards compatible with the SM501.
+
+Sabre
+www.sabreadv.com
+
+Silicon Motion
+www.siliconmotion.com
+-----8&lt;-----
+
+The article seems not being online at CIE anymore, I extracted the
+above information from Google Cache.
+
+Best regards,
+-- 
+Clemens Koller
+__________________________________
+R&amp;D Imaging Devices
+Anagramm GmbH
+Rupert-Mayer-Stra&#223;e 45/1
+Linhof Werksgel&#228;nde
+D-81379 M&#252;nchen
+Tel.089-741518-50
+Fax 089-741518-19
+<A HREF="http://www.anagramm-technology.com">http://www.anagramm-technology.com</A>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000032.html">sm501 on pxa255 with the kernel 2.6.20
+</A></li>
+	<LI>Next message: <A HREF="000036.html">sm501 on pxa255 with the kernel 2.6.20
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#34">[ date ]</a>
+              <a href="thread.html#34">[ thread ]</a>
+              <a href="subject.html#34">[ subject ]</a>
+              <a href="author.html#34">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>

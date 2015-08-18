@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> platform device driver development
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/sm5xx-devel/2006-October/index.html" >
+   <LINK REL="made" HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20platform%20device%20driver%20development&In-Reply-To=%3C453E78EA.6080008%40applieddata.net%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000019.html">
+   <LINK REL="Next"  HREF="000021.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>platform device driver development</H1>
+    <B>Robert Whaley</B> 
+    <A HREF="mailto:sm5xx-devel%40lists.berlios.de?Subject=Re%3A%20platform%20device%20driver%20development&In-Reply-To=%3C453E78EA.6080008%40applieddata.net%3E"
+       TITLE="platform device driver development">rwhaley at applieddata.net
+       </A><BR>
+    <I>Tue Oct 24 22:34:50 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000019.html">platform device driver development
+</A></li>
+        <LI>Next message: <A HREF="000021.html">platform device driver development
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#20">[ date ]</a>
+              <a href="thread.html#20">[ thread ]</a>
+              <a href="subject.html#20">[ subject ]</a>
+              <a href="author.html#20">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Andrey Volkov wrote:
+&gt;<i> Hello, Clemens!
+</I>&gt;<i> 
+</I>&gt;<i> Clemens Koller wrote:
+</I>&gt;<i> 
+</I>&gt;&gt;<i> Hello, Ole!
+</I>&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> I'm just writing the platform driver to support mmio mode on pxa255
+</I>&gt;&gt;&gt;<i> devices.
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> There is a MPC5200 (PowerPC Platform) driver which accesses the sm501
+</I>&gt;&gt;<i> on the local bus. The guys at denx.de made the driver, IIRC.
+</I>&gt;&gt;<i> The Boards are manufactured by Kontron at least. Maybe you can check out
+</I>&gt;&gt;<i> some code there.
+</I>&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> I'm struggling around in writing the probe function.
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> Could you please give me some hints what the following entries in the
+</I>&gt;&gt;&gt;<i> sm5xx_bus struct are needed for and how I would request mem regions when
+</I>&gt;&gt;&gt;<i> not using pci?
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i>     u32     reg_addr;           /* !!!Physical addr !!!*/
+</I>&gt;&gt;&gt;<i>     void    __iomem *regbase;
+</I>&gt;&gt;&gt;<i>     u32     regs_size;
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i>     u32     mem_addr;           /* !!!Physical addr !!!*/
+</I>&gt;&gt;&gt;<i>     void    __iomem *mem;
+</I>&gt;&gt;&gt;<i>     u32        mem_limit;
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> Those are the two PCI address regions, as shown below:
+</I>&gt;&gt;<i> $ lspci -vv
+</I>&gt;&gt;<i> 00:0d.0 Class 0380: 126f:0501 (rev a0)
+</I>&gt;&gt;<i>         Subsystem: 0101:0101
+</I>&gt;&gt;<i>         Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+</I>&gt;&gt;<i> ParErr- Stepping- SERR- FastB2B-
+</I>&gt;&gt;<i>         Status: Cap+ 66Mhz+ UDF- FastB2B- ParErr- DEVSEL=medium 
+</I>&gt;&gt;<i> &gt;TAbort- &lt;TAbort- &lt;MAbort- &gt;SERR- &lt;PERR-
+</I>&gt;&gt;<i>         Latency: 128
+</I>&gt;&gt;<i>         Interrupt: pin A routed to IRQ 49
+</I>&gt;&gt;<i>         Region 0: Memory at 9f800000 (32-bit, non-prefetchable) [size=8M]
+</I>&gt;&gt;<i>         Region 1: Memory at 9f600000 (32-bit, non-prefetchable) [size=2M]
+</I>&gt;&gt;<i>         Capabilities: [40] Power Management version 1
+</I>&gt;&gt;<i>                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=0mA 
+</I>&gt;&gt;<i> PME(D0-,D1-,D2-,D3hot-,D3cold-)
+</I>&gt;&gt;<i>                 Status: D0 PME-Enable- DSel=0 DScale=0 PME-
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> In the small (2M) junk, there are all the Memory Mapped IO registers...
+</I>&gt;&gt;<i> The big junk (8M) is basically the Video Memory.
+</I>&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> I did not got that realy streight yet.
+</I>&gt;&gt;&gt;<i>
+</I>&gt;&gt;&gt;<i> If anyone could outline in a few words what in detail needs to be done
+</I>&gt;&gt;&gt;<i> in the probe function of sm5xx_platform.c this would help me alot.
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> Sorry, I don't know how they did it on the local busses.
+</I>&gt;&gt;<i> Maybe the MPC5200 stuff can help you.
+</I>&gt;&gt;<i>
+</I>&gt;<i> As I remember Robert Whaley wrote sm501 mmio based driver
+</I>&gt;<i> for PXA couple years ago.
+</I>&gt;<i> 
+</I>&gt;<i> Robert, any comments?
+</I>
+Jeff and I have a PXA255 SM501 driver for our VGX board.  It's 
+running 2.4.27, but you are welcome to download the kernel 
+patches from our web site (www.applieddata.net/support).
+
+This driver allocate the memory in the driver initialization in 
+arch/arm/mach-pxa/sm501.c:
+
+sm501Mem = ioremap_nocache(CONFIG_SM501_BASE, sm501_mem_limit);
+sm501Reg = ioremap_nocache(CONFIG_SM501_BASE + SM501_REG_OFFSET, 
+SM501_REG_SIZE);
+
+This provides kernel virtual addresses in sm501Mem and sm501Reg.
+
+CONFIG_SM501_BASE is the physical address which will be specific 
+to your board and will depend on which PXA255 chip select your 
+SM501 is using.
+
+You could also download our 2.6.17 kernel patches which has a PCI 
+based SM501 on the Portal board (IXP425).   Since it's derived 
+from the older kernel it probably could be adapted back to mmio 
+fairly easily.  In this patch the file is arch/arm/common/sm501.c
+
+&gt;<i> 
+</I>&gt;&gt;<i> Just FYI: I have the PCI Demo Board with a SM501GX08 rev. AA
+</I>&gt;&gt;<i> and on our prototype a SM501GX08LF00 rev AB.
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> May be you are know differences between AA and AB (or planned AC)?
+</I>&gt;<i> Especially which bugs (if any) was fixed in this rev.
+</I>&gt;<i> Or 'B' has meaning only 'we are now ROHS compatible'?
+</I>&gt;<i> 
+</I>&gt;&gt;<i> Both plugged/soldered via PCI to a mpc8540 ppc.
+</I>&gt;&gt;<i>
+</I>&gt;<i> We have same configuration :) but with - MPC5200.
+</I>&gt;<i> 
+</I>&gt;&gt;<i> Best greets,
+</I>&gt;&gt;<i>
+</I>&gt;&gt;<i> Clemens Koller
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> -- 
+</I>&gt;<i> Regards
+</I>&gt;<i> Andrey Volkov
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>
+
+-- 
+Robert Whaley
+Applied Data Systems            www.applieddata.net
+434-244-9504		    <A HREF="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">rwhaley at applieddata.net</A>
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000019.html">platform device driver development
+</A></li>
+	<LI>Next message: <A HREF="000021.html">platform device driver development
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#20">[ date ]</a>
+              <a href="thread.html#20">[ thread ]</a>
+              <a href="subject.html#20">[ subject ]</a>
+              <a href="author.html#20">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/sm5xx-devel">More information about the Sm5xx-devel
+mailing list</a><br>
+</body></html>
